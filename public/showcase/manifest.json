@@ -1,0 +1,41 @@
+{
+  "generated": "2026-08-25T20:25:56.404Z",
+  "assets": [
+    {
+      "key": "portrait",
+      "sourceWidth": 1200,
+      "sourceHeight": 1600,
+      "displayWidth": 900
+    },
+    {
+      "key": "woman",
+      "sourceWidth": 1000,
+      "sourceHeight": 1400,
+      "displayWidth": 640
+    },
+    {
+      "key": "animal",
+      "sourceWidth": 1000,
+      "sourceHeight": 667,
+      "displayWidth": 640
+    },
+    {
+      "key": "car",
+      "sourceWidth": 480,
+      "sourceHeight": 360,
+      "displayWidth": 520
+    },
+    {
+      "key": "girl",
+      "sourceWidth": 600,
+      "sourceHeight": 399,
+      "displayWidth": 520
+    },
+    {
+      "key": "food",
+      "sourceWidth": 6000,
+      "sourceHeight": 4000,
+      "displayWidth": 520
+    }
+  ]
+}

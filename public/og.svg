@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <rect width="1200" height="630" fill="#fbfaf8"/>
+  <g opacity="0.05">
+    <path d="M0 0h1200M0 64h1200M0 128h1200M0 192h1200M0 256h1200M0 320h1200M0 384h1200M0 448h1200M0 512h1200M0 576h1200" stroke="#0e0e10" stroke-width="1"/>
+    <path d="M0 0v630M64 0v630M128 0v630M192 0v630M256 0v630M320 0v630M384 0v630M448 0v630M512 0v630M576 0v630M640 0v630M704 0v630M768 0v630M832 0v630M896 0v630M960 0v630M1024 0v630M1088 0v630M1152 0v630" stroke="#0e0e10" stroke-width="1"/>
+  </g>
+  <g transform="translate(88 88)">
+    <rect width="64" height="64" rx="16" fill="#0e0e10"/>
+    <path d="M32 15c9.4 0 17 7.6 17 17s-7.6 17-17 17c-4.4 0-8.4-1.7-11.4-4.5 2.1.9 4.4 1.4 6.8 1.4 9.4 0 17-7.6 17-17 0-3.2-.9-6.2-2.4-8.7A16.9 16.9 0 0 0 32 15Z" fill="#d7f24b"/>
+    <circle cx="26" cy="32" r="9.2" fill="#d7f24b"/>
+  </g>
+  <text x="88" y="300" font-family="Georgia, serif" font-size="86" font-weight="400" fill="#0e0e10">Remove backgrounds</text>
+  <text x="88" y="396" font-family="Georgia, serif" font-size="86" font-style="italic" fill="#0e0e10">in seconds.</text>
+  <text x="88" y="470" font-family="Helvetica, Arial, sans-serif" font-size="28" fill="#5c5b57">Transparent PNGs at full original resolution</text>
+  <rect x="88" y="516" width="312" height="52" rx="12" fill="#d7f24b"/>
+  <text x="118" y="549" font-family="Helvetica, Arial, sans-serif" font-size="20" font-weight="600" fill="#101206">ADH Background Remover</text>
+</svg>

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>ADH Background Remover</title>
+    <link rel="stylesheet" href="ui.css" />
+  </head>
+  <body>
+    <div class="popup">
+      <div class="header">
+        <img src="icons/icon-32.png" width="20" height="20" alt="" />
+        <h1>Background Remover</h1>
+        <button id="open-options" class="btn btn-ghost spacer" style="height: 26px; padding: 0 8px">
+          Settings
+        </button>
+      </div>
+
+      <input id="file-input" type="file" accept="image/*" multiple hidden />
+
+      <button id="dropzone" class="dropzone" type="button">
+        <strong>Drop an image here</strong>
+        <span class="subtle">or click to choose a file</span>
+        <span class="subtle">JPG · PNG · WEBP · HEIC · up to 25MB</span>
+      </button>
+
+      <div id="status" class="status hidden" style="margin-top: 10px">
+        <span class="spinner" id="status-spinner"></span>
+        <span id="status-text">Removing background…</span>
+      </div>
+
+      <div class="section">
+        <p class="section-title">Recent</p>
+        <div id="recents" class="recents"></div>
+        <p id="recents-empty" class="subtle">Nothing yet. Right-click any image on a page and choose <strong>Remove background</strong>, or drop a file above.</p>
+      </div>
+
+      <div class="section row">
+        <button id="open-web-app" class="btn btn-block">Open web app</button>
+      </div>
+    </div>
+    <script type="module" src="popup.js"></script>
+  </body>
+</html>
