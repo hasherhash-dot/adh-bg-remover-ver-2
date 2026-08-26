@@ -3,6 +3,7 @@ import { AppError } from '@/lib/errors';
 import { serverEnv } from '@/lib/config/env';
 import type { BackgroundRemovalProvider } from './types';
 import { LocalOnnxProvider } from './providers/local-onnx';
+import { AdhOnnxProvider } from './providers/adh-onnx';
 import { HttpProvider } from './providers/http';
 import { ReplicateProvider } from './providers/replicate';
 import { MockProvider } from './providers/mock';
@@ -15,7 +16,7 @@ import { MockProvider } from './providers/mock';
  * adding a case here — no UI, API or service change required.
  */
 
-export type ProviderId = 'local' | 'http' | 'replicate' | 'mock';
+export type ProviderId = 'local' | 'adh-onnx' | 'http' | 'replicate' | 'mock';
 
 type ProviderFactory = () => BackgroundRemovalProvider;
 
@@ -25,6 +26,16 @@ const factories: Record<ProviderId, ProviderFactory> = {
     return new LocalOnnxProvider({
       model: env.BACKGROUND_REMOVAL_MODEL,
       debug: env.DEBUG_BG_REMOVAL,
+    });
+  },
+  // The ADH engine. Deliberately has no fallback to `local`: during A/B
+  // testing a silent substitution would attribute one engine's results to
+  // the other. A misconfigured ADH provider raises PROVIDER_MISCONFIGURED.
+  'adh-onnx': () => {
+    const env = serverEnv();
+    return new AdhOnnxProvider({
+      modelPath: env.ADH_MODEL_PATH,
+      threads: env.ADH_THREADS,
     });
   },
   http: () => {

@@ -21,3 +21,8 @@ Thumbs.db
 .runtime/
 debug/output/
 debug/
+
+# Model weights. Built by scripts/export-birefnet.py, not committed —
+# 178MB per resolution. See models/README.md.
+models/*.onnx
+models/*.onnx.data

@@ -17,10 +17,19 @@ const booleanish = z
 const serverEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 
+  // 'local' is the IMG.LY/ISNet engine and remains the default. 'adh-onnx' is
+  // our own BiRefNet-lite 640 engine, selectable for A/B testing. There is no
+  // fallback between them: if the selected provider cannot start, the request
+  // fails loudly, because a silent switch would make every comparison
+  // meaningless.
   BACKGROUND_REMOVAL_PROVIDER: z
-    .enum(['local', 'http', 'replicate', 'mock'])
+    .enum(['local', 'adh-onnx', 'http', 'replicate', 'mock'])
     .default('local'),
   BACKGROUND_REMOVAL_MODEL: z.enum(['small', 'medium', 'large']).default('medium'),
+  /** Path to the ADH engine's ONNX file. Its .onnx.data must sit beside it. */
+  ADH_MODEL_PATH: z.string().optional(),
+  /** Intra-op threads for the ADH engine. 8 measured fastest on 12 cores. */
+  ADH_THREADS: z.coerce.number().int().min(1).max(64).default(8),
   BACKGROUND_REMOVAL_INFERENCE_SIZE: z.coerce.number().int().min(256).max(4096).default(1024),
   BACKGROUND_REMOVAL_API_URL: z.string().url().optional(),
   BACKGROUND_REMOVAL_API_KEY: z.string().min(1).optional(),

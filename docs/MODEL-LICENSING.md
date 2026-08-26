@@ -3,6 +3,12 @@
 Factual record of what each candidate's own repository and distribution page
 states about licensing. Verified **26 August 2026**.
 
+> **Status: unresolved.** BiRefNet-lite 640 now ships in the codebase as the
+> `adh-onnx` provider, but it is **not** the application default and the
+> commercial position of its weights has **not** been cleared. Nothing below
+> should be read as saying the weights are approved for commercial use. The
+> open question is stated at the end of the BiRefNet section.
+
 **This is not legal advice and contains no guarantees.** It records what the
 sources say, including where they say nothing. Anything marked *unstated* is a
 gap that a lawyer should close before that model ships in a paid product.
@@ -67,6 +73,11 @@ its metadata and asserts MIT only through a README badge.
 This is still the clearest position of any candidate — an author-authored MIT
 badge beats silence, and beats AGPL or CC-BY-NC outright. It is not the same
 thing as an explicit weight licence, and it should not be reported as one.
+
+**Where it is used.** `src/lib/bg-removal/providers/adh-onnx.ts`, selected by
+`BACKGROUND_REMOVAL_PROVIDER=adh-onnx`. Weights are built locally by
+`scripts/export-birefnet.py` from the upstream `model.safetensors` and are not
+committed. Nothing is redistributed by this repository.
 
 **What to resolve before production:** whether the MIT badge in the BiRefNet
 README is intended to cover the published weights as well as the code. That is
@@ -135,8 +146,11 @@ u2netp.onnx               https://github.com/danielgatis/rembg/releases/download
 
 | Model | Code | Weights | Commercial | Verdict |
 |---|---|---|---|---|
-| IMG.LY ISNet | AGPL-3.0 | IMG.LY terms | needs a commercial licence | current, must be resolved |
-| BiRefNet | MIT | **MIT** | clearest of the candidates | strongest on licence |
+| IMG.LY ISNet | AGPL-3.0 | IMG.LY terms | needs a commercial licence | **current default**, must be resolved |
+| BiRefNet | MIT | MIT asserted by README badge only; **no licence in the weights repo metadata** | **not cleared** — clearest of the candidates, still an open question | implemented as `adh-onnx`, not the default |
 | IS-Net | Apache-2.0 | unstated | unclear | needs the DIS5K terms read |
 | U²-Net | Apache-2.0 | unstated | unclear | needs review |
 | BRIA RMBG | — | CC BY-NC | no | rejected |
+
+No row in this table says "cleared for commercial use", and none should until
+somebody qualified has answered the question in the BiRefNet section.
