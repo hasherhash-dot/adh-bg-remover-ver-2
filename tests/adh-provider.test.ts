@@ -161,10 +161,16 @@ describe('provider switching', () => {
     resetServerEnvCache();
   });
 
-  it('selects the IMG.LY engine by default', () => {
+  it('selects the ADH engine by default', () => {
     delete process.env.BACKGROUND_REMOVAL_PROVIDER;
     resetServerEnvCache();
+    expect(resolveProvider().id).toBe('adh-onnx');
+  });
+
+  it('still selects IMG.LY when asked for, so it remains available', () => {
     // Registry key is 'local'; the provider reports itself as 'local-onnx'.
+    process.env.BACKGROUND_REMOVAL_PROVIDER = 'local';
+    resetServerEnvCache();
     expect(resolveProvider().id).toBe('local-onnx');
   });
 

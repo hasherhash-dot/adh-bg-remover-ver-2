@@ -7,6 +7,7 @@ import { AdhOnnxProvider } from './providers/adh-onnx';
 import { HttpProvider } from './providers/http';
 import { ReplicateProvider } from './providers/replicate';
 import { MockProvider } from './providers/mock';
+import { withFallback } from './providers/with-fallback';
 
 /**
  * Resolves the configured provider.
@@ -68,16 +69,30 @@ const factories: Record<ProviderId, ProviderFactory> = {
 let instance: BackgroundRemovalProvider | null = null;
 let instanceId: ProviderId | null = null;
 
-/** Returns the process-wide provider singleton, constructing it on first use. */
-export function resolveProvider(override?: ProviderId): BackgroundRemovalProvider {
-  const id = override ?? (serverEnv().BACKGROUND_REMOVAL_PROVIDER as ProviderId);
-  if (instance && instanceId === id) return instance;
-
+function build(id: ProviderId): BackgroundRemovalProvider {
   const factory = factories[id];
   if (!factory) {
     throw new AppError('PROVIDER_MISCONFIGURED', { detail: `unknown provider "${id}"` });
   }
-  instance = factory();
+  return factory();
+}
+
+/**
+ * Returns the process-wide provider singleton, constructing it on first use.
+ *
+ * An explicit `override` bypasses the configured standby entirely. Tests, the
+ * health check and any A/B tooling ask for one engine by name and must get
+ * exactly that engine, or the result cannot be attributed.
+ */
+export function resolveProvider(override?: ProviderId): BackgroundRemovalProvider {
+  if (override) return build(override);
+
+  const env = serverEnv();
+  const id = env.BACKGROUND_REMOVAL_PROVIDER as ProviderId;
+  if (instance && instanceId === id) return instance;
+
+  const standbyId = env.BACKGROUND_REMOVAL_FALLBACK as ProviderId | undefined;
+  instance = withFallback(build(id), standbyId ? build(standbyId) : null);
   instanceId = id;
   return instance;
 }

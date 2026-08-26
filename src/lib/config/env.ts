@@ -17,14 +17,27 @@ const booleanish = z
 const serverEnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
 
-  // 'local' is the IMG.LY/ISNet engine and remains the default. 'adh-onnx' is
-  // our own BiRefNet-lite 640 engine, selectable for A/B testing. There is no
-  // fallback between them: if the selected provider cannot start, the request
-  // fails loudly, because a silent switch would make every comparison
-  // meaningless.
+  // 'adh-onnx' is our own BiRefNet-lite 640 engine and is now the default.
+  // 'local' is the IMG.LY/ISNet engine, kept available and one variable away.
+  //
+  // Switching the default does not remove IMG.LY: it stays selectable, its
+  // tests still run, and the frozen Version A backup is untouched.
   BACKGROUND_REMOVAL_PROVIDER: z
     .enum(['local', 'adh-onnx', 'http', 'replicate', 'mock'])
-    .default('local'),
+    .default('adh-onnx'),
+
+  /**
+   * Standby engine, used only when the primary cannot start at all — a missing
+   * model, a session that will not open. Never used for a per-image failure.
+   *
+   * Unset by default, and deliberately so. While the two engines are being
+   * compared, an automatic switch would attribute one engine's work to the
+   * other on exactly the images where the difference matters. Results are
+   * always reported under the engine that actually ran.
+   */
+  BACKGROUND_REMOVAL_FALLBACK: z
+    .enum(['local', 'adh-onnx', 'http', 'replicate', 'mock'])
+    .optional(),
   BACKGROUND_REMOVAL_MODEL: z.enum(['small', 'medium', 'large']).default('medium'),
   /** Path to the ADH engine's ONNX file. Its .onnx.data must sit beside it. */
   ADH_MODEL_PATH: z.string().optional(),
