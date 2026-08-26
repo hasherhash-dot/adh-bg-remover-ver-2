@@ -64,6 +64,14 @@ const ENGINES = {
     output: 0,
     normalise: 'minmax',
   },
+  // Our own re-exports. Same weights, exported per resolution with
+  // deform_conv2d expressed via grid_sample so ONNX Runtime can run it.
+  // These already apply the sigmoid, so no normalisation is needed.
+  'birefnet-512': { file: 'birefnet-lite-512.onnx', size: 512, mean: [0.485,0.456,0.406], std: [0.229,0.224,0.225], scaleByMax: false, output: 0, normalise: 'sigmoid-if-needed' },
+  'birefnet-640': { file: 'birefnet-lite-640.onnx', size: 640, mean: [0.485,0.456,0.406], std: [0.229,0.224,0.225], scaleByMax: false, output: 0, normalise: 'sigmoid-if-needed' },
+  'birefnet-768': { file: 'birefnet-lite-768.onnx', size: 768, mean: [0.485,0.456,0.406], std: [0.229,0.224,0.225], scaleByMax: false, output: 0, normalise: 'sigmoid-if-needed' },
+  'birefnet-1024': { file: 'birefnet-lite-1024.onnx', size: 1024, mean: [0.485,0.456,0.406], std: [0.229,0.224,0.225], scaleByMax: false, output: 0, normalise: 'sigmoid-if-needed' },
+
   birefnet: {
     file: 'birefnet-lite.onnx',
     size: 1024,

@@ -37,20 +37,41 @@ quality problem.
 
 ## Candidates
 
-### BiRefNet
+### BiRefNet — current candidate
 
 | | |
 |---|---|
-| Version | BiRefNet_lite, ONNX export |
+| Version | BiRefNet_lite |
 | Code source | https://github.com/ZhengPeng7/BiRefNet |
-| Weight source | https://huggingface.co/onnx-community/BiRefNet_lite-ONNX (`onnx/model.onnx`) |
+| Weight source | https://huggingface.co/ZhengPeng7/BiRefNet_lite (`model.safetensors`, 169.4 MB) |
+| Prior ONNX source | https://huggingface.co/onnx-community/BiRefNet_lite-ONNX (`onnx/model.onnx`) |
 | Code licence | **MIT** |
-| Weight licence | **MIT** — the Hugging Face model card carries `license: mit` |
-| Size | 213.6 MB fp32 / 109.2 MB fp16 (full BiRefNet: 927.6 MB / 467.0 MB) |
+| Weight licence | **See the discrepancy below** |
+| Size | our re-exports 177–180 MB each (weights in `<name>.onnx.data`) |
 | Training data | DIS5K, HRSOD, UHRSD, COD10K and others, each with its own terms |
-| Commercial status | The only candidate whose **weight distribution** carries an explicit permissive tag |
 | Attribution | MIT notice |
-| Uncertainty | Training datasets carry academic terms. Whether those propagate to trained weights is an unsettled question generally, not specific to this model |
+
+**A discrepancy worth recording.** Three sources, three different strengths of
+claim about the same weights:
+
+| Source | What it declares |
+|---|---|
+| `ZhengPeng7/BiRefNet_lite` — the actual weights we use | **No `license` field** in the model card metadata |
+| Same repo's README | An MIT badge linking to a `LICENSE` file |
+| `onnx-community/BiRefNet_lite-ONNX` — a third-party re-export | `license: mit` in the card metadata |
+
+So the strongest machine-readable MIT claim sits on a **re-export by someone
+other than the author**, while the author's own weights repo declares nothing in
+its metadata and asserts MIT only through a README badge.
+
+This is still the clearest position of any candidate — an author-authored MIT
+badge beats silence, and beats AGPL or CC-BY-NC outright. It is not the same
+thing as an explicit weight licence, and it should not be reported as one.
+
+**What to resolve before production:** whether the MIT badge in the BiRefNet
+README is intended to cover the published weights as well as the code. That is
+a question for the author or for counsel, and it is the single remaining
+licensing gap on the recommended path.
 
 ### IS-Net (isnet-general-use)
 
