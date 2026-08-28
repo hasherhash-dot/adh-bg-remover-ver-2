@@ -1,4 +1,4 @@
-import { Plus } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
@@ -21,22 +21,22 @@ export interface FaqItem {
 
 export function Faq({ items, className }: { items: FaqItem[]; className?: string }) {
   return (
-    <dl className={cn('flex flex-col gap-2.5', className)}>
+    <dl className={cn('flex flex-col gap-3', className)}>
       {items.map((item) => (
         <details
           key={item.question}
           className="group overflow-hidden rounded-md border border-line bg-paper-raised transition-colors duration-150 hover:border-line-strong open:border-line-strong open:shadow-subtle"
         >
-          <summary className="flex cursor-pointer list-none items-start justify-between gap-5 px-4 py-4 sm:px-5 [&::-webkit-details-marker]:hidden">
-            <dt className="text-[15px] font-medium leading-snug text-ink">{item.question}</dt>
+          <summary className="flex cursor-pointer list-none items-start justify-between gap-5 px-5 py-5 sm:px-6 [&::-webkit-details-marker]:hidden">
+            <dt className="text-[16px] font-medium leading-snug text-ink">{item.question}</dt>
             <span
-              className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-xs border border-line text-ink-subtle transition-transform duration-200 group-open:rotate-45 group-open:border-accent group-open:text-accent"
+              className="mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-xs border border-line text-ink-subtle transition-transform duration-200 group-open:rotate-180 group-open:border-accent group-open:text-accent"
               aria-hidden
             >
-              <Plus className="size-3.5" />
+              <ChevronDown className="size-3.5" />
             </span>
           </summary>
-          <dd className="border-t border-line px-4 pb-4 pt-3.5 text-sm leading-relaxed text-ink-muted sm:px-5">
+          <dd className="border-t border-line px-5 pb-5 pt-4 text-[15px] leading-relaxed text-ink-muted sm:px-6">
             {item.answer}
           </dd>
         </details>

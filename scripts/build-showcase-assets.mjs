@@ -26,16 +26,21 @@ import sharp from 'sharp';
 const API = process.env.SHOWCASE_API ?? 'http://localhost:3000/api/remove-background';
 const OUT = 'public/showcase';
 
-/** width the asset is displayed at, roughly doubled for retina */
+/**
+ * Display width, roughly doubled for retina. The hero asset is deliberately
+ * the largest: it is the one image that carries the page above the fold.
+ */
 const SOURCES = [
-  { key: 'portrait', file: 'debug/input/portrait-1.jpg', width: 900 },
-  { key: 'woman', file: 'debug/input/portrait-2.jpg', width: 640 },
-  { key: 'animal', file: 'debug/input/animal.jpg', width: 640 },
-  { key: 'car', file: 'debug/input/car.jpg', width: 520 },
-  { key: 'girl', file: 'debug/input/girl.jpg', width: 520 },
-  { key: 'food', file: 'debug/input/food.jpg', width: 520 },
+  { key: 'hero', file: 'debug/input/afro-wall.webp', width: 1400 },
+  { key: 'portrait', file: 'debug/input/portrait-1.jpg', width: 1200 },
+  { key: 'hair', file: 'debug/input/blonde-salon.webp', width: 900 },
+  { key: 'stripes', file: 'debug/input/stripes-on-stripes.webp', width: 760 },
+  { key: 'product', file: 'debug/input/car.jpg', width: 640 },
+  { key: 'food', file: 'debug/input/food.jpg', width: 640 },
+  { key: 'animal', file: 'debug/input/animal.jpg', width: 560 },
+  { key: 'girl', file: 'debug/input/girl.jpg', width: 400 },
+  { key: 'dress', file: 'debug/input/monochrome-dress.webp', width: 400 },
 ];
-
 async function cutout(file) {
   const buffer = await readFile(file);
   const form = new FormData();
@@ -82,15 +87,15 @@ async function main() {
   // A 1:1 crop of the hair boundary. This is the detail claim — soft alpha on
   // fine strands — so it is shown at native resolution rather than scaled.
   process.stdout.write('  hair crop … ');
-  const portraitCut = await cutout('debug/input/portrait-1.jpg');
-  const cropBox = { left: 300, top: 300, width: 620, height: 420 };
+  const portraitCut = await cutout('debug/input/blonde-salon.webp');
+  const cropBox = { left: 250, top: 150, width: 760, height: 520 };
 
   await sharp(portraitCut)
     .extract(cropBox)
     .webp({ quality: 92, alphaQuality: 100 })
     .toFile(join(OUT, 'hair-after.webp'));
 
-  await sharp('debug/input/portrait-1.jpg')
+  await sharp('debug/input/blonde-salon.webp')
     .extract(cropBox)
     .webp({ quality: 88 })
     .toFile(join(OUT, 'hair-before.webp'));

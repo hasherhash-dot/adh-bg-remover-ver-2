@@ -64,7 +64,7 @@ export function Navbar() {
     <header
       className={cn(
         'sticky top-0 z-40 w-full border-b transition-colors duration-300',
-        scrolled ? 'border-line bg-paper/85 backdrop-blur-md' : 'border-transparent bg-paper',
+        scrolled ? 'border-line bg-paper/85 shadow-subtle backdrop-blur-md' : 'border-transparent bg-paper',
       )}
     >
       <nav
@@ -76,11 +76,12 @@ export function Navbar() {
           className="-my-2 flex min-h-11 shrink-0 items-center gap-2.5 rounded-xs"
           aria-label="ADH Background Remover — home"
         >
-          <Logo className="size-7" />
+          <Logo className="size-8" />
           {/* The full product name needs room. On a phone the wordmark plus a
               CTA plus a menu button does not fit, so the descriptor is dropped
               below sm — the page title carries it there instead. */}
-          <span className="text-[15px] font-semibold tracking-tight text-ink">
+          <span aria-hidden className="hidden h-6 w-px bg-line sm:block" />
+          <span className="text-[16px] font-semibold tracking-tight text-ink">
             ADH{' '}
             <span className="hidden font-normal text-ink-muted sm:inline">Background Remover</span>
           </span>
@@ -95,7 +96,7 @@ export function Navbar() {
                   href={link.href}
                   aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'rounded-xs px-3 py-2 text-[13.5px] font-medium transition-colors',
+                    'rounded-xs px-3 py-2 text-[14px] font-medium transition-colors',
                     active ? 'text-ink' : 'text-ink-muted hover:text-ink',
                   )}
                 >
@@ -113,7 +114,7 @@ export function Navbar() {
           {/* Hidden on the studio page itself — a CTA to where you already are
               is noise. */}
           {!isStudio && (
-            <Button variant="primary" size="sm" asChild>
+            <Button variant="accent" size="sm" asChild>
               <Link href="/remove-background">Remove background</Link>
             </Button>
           )}
@@ -122,7 +123,7 @@ export function Navbar() {
         {/* Mobile: keep the product action visible, tuck the rest behind a menu. */}
         <div className="flex items-center gap-1.5 md:hidden">
           {!isStudio && (
-            <Button variant="primary" size="sm" asChild>
+            <Button variant="accent" size="sm" asChild>
               <Link href="/remove-background">Remove background</Link>
             </Button>
           )}

@@ -1,41 +1,59 @@
 {
-  "generated": "2026-08-25T20:25:56.404Z",
+  "generated": "2026-08-27T23:59:20.596Z",
   "assets": [
+    {
+      "key": "hero",
+      "sourceWidth": 801,
+      "sourceHeight": 1200,
+      "displayWidth": 1400
+    },
     {
       "key": "portrait",
       "sourceWidth": 1200,
       "sourceHeight": 1600,
+      "displayWidth": 1200
+    },
+    {
+      "key": "hair",
+      "sourceWidth": 1440,
+      "sourceHeight": 1800,
       "displayWidth": 900
     },
     {
-      "key": "woman",
-      "sourceWidth": 1000,
-      "sourceHeight": 1400,
+      "key": "stripes",
+      "sourceWidth": 550,
+      "sourceHeight": 759,
+      "displayWidth": 760
+    },
+    {
+      "key": "product",
+      "sourceWidth": 480,
+      "sourceHeight": 360,
+      "displayWidth": 640
+    },
+    {
+      "key": "food",
+      "sourceWidth": 6000,
+      "sourceHeight": 4000,
       "displayWidth": 640
     },
     {
       "key": "animal",
       "sourceWidth": 1000,
       "sourceHeight": 667,
-      "displayWidth": 640
-    },
-    {
-      "key": "car",
-      "sourceWidth": 480,
-      "sourceHeight": 360,
-      "displayWidth": 520
+      "displayWidth": 560
     },
     {
       "key": "girl",
       "sourceWidth": 600,
       "sourceHeight": 399,
-      "displayWidth": 520
+      "displayWidth": 400
     },
     {
-      "key": "food",
-      "sourceWidth": 6000,
-      "sourceHeight": 4000,
-      "displayWidth": 520
+      "key": "dress",
+      "sourceWidth": 600,
+      "sourceHeight": 800,
+      "displayWidth": 400
     }
   ]
 }

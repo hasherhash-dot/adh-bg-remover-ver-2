@@ -26,15 +26,6 @@ const SECTIONS = [
     ],
   },
   {
-    title: 'Use cases',
-    links: [
-      { href: '/remove-background-from-jpg', label: 'JPG backgrounds' },
-      { href: '/remove-background-from-png', label: 'PNG backgrounds' },
-      { href: '/product-photos', label: 'Product photos' },
-      { href: '/profile-pictures', label: 'Profile pictures' },
-    ],
-  },
-  {
     title: 'Developers',
     links: [
       { href: '/api', label: 'API reference' },
@@ -47,9 +38,9 @@ const SECTIONS = [
 export function Footer() {
   return (
     <footer className="border-t border-line bg-paper-sunken">
-      <div className="mx-auto max-w-6xl px-5 sm:px-8">
+      <div className="mx-auto max-w-[92rem] px-5 sm:px-8">
         {/* Tier one — navigation. */}
-        <div className="grid gap-9 py-12 sm:grid-cols-2 lg:grid-cols-[1.4fr_repeat(3,1fr)] lg:gap-10">
+        <div className="grid gap-9 py-14 sm:grid-cols-2 lg:grid-cols-[1.8fr_repeat(2,1fr)] lg:gap-12">
           <div>
             <Link
               href="/"
