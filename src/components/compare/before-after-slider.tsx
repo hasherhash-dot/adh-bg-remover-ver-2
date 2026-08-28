@@ -255,13 +255,13 @@ export function BeforeAfterSlider({
         {/* Labels fade out as the divider approaches them, so they never sit on
             a sliver of image or collide with the handle. */}
         <span
-          className="pointer-events-none absolute left-3 top-3 rounded-full bg-ink/70 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-paper backdrop-blur-sm transition-opacity duration-200"
+          className="pointer-events-none absolute left-3 top-3 rounded-full bg-ink/70 px-2.5 py-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-paper backdrop-blur-sm transition-opacity duration-200"
           style={{ opacity: position < 14 ? 0 : 1 }}
         >
           Before
         </span>
         <span
-          className="pointer-events-none absolute right-3 top-3 rounded-full bg-ink/70 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-paper backdrop-blur-sm transition-opacity duration-200"
+          className="pointer-events-none absolute right-3 top-3 rounded-full bg-ink/70 px-2.5 py-1 text-[12px] font-semibold uppercase tracking-[0.08em] text-paper backdrop-blur-sm transition-opacity duration-200"
           style={{ opacity: position > 86 ? 0 : 1 }}
         >
           After
