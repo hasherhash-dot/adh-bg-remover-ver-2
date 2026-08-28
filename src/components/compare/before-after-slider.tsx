@@ -50,6 +50,7 @@ export function BeforeAfterSlider({
   maxViewportHeight = 62,
 }: BeforeAfterSliderProps) {
   const frameRef = useRef<HTMLDivElement>(null);
+  const afterRef = useRef<HTMLImageElement>(null);
   const [position, setPosition] = useState(initialPosition);
   const [zoom, setZoom] = useState(1);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
@@ -65,12 +66,45 @@ export function BeforeAfterSlider({
     setIsTouch(window.matchMedia('(pointer: coarse)').matches);
   }, []);
 
+  /**
+   * Adopt the result image's geometry and reveal it.
+   *
+   * Called from `onLoad` and, critically, directly from the effect below for
+   * the case where the image finished loading before React attached the
+   * handler.
+   */
+  const adoptImage = useCallback((image: HTMLImageElement) => {
+    const { naturalWidth, naturalHeight } = image;
+    if (naturalWidth && naturalHeight) setAspect(naturalWidth / naturalHeight);
+    setLoaded(true);
+  }, []);
+
   // Reset when a different image is shown.
   useEffect(() => {
     setLoaded(false);
     setZoom(1);
     setOffset({ x: 0, y: 0 });
   }, [afterUrl]);
+
+  /**
+   * Cover the already-decoded case.
+   *
+   * `onLoad` alone is not enough. When the source is a static file rather than
+   * a freshly created blob: URL, the browser can finish loading it from the
+   * server-rendered markup before React hydrates — so the load event fires
+   * with no listener attached, `loaded` never becomes true, and the result
+   * layer stays at opacity 0 with only the transparency board visible beneath
+   * it. `aspect` never arrives either, leaving the frame at its 4/3 default
+   * while the picture inside is 3/4.
+   *
+   * The tool never hit this because its result is a blob: URL created after
+   * hydration, which cannot beat the listener. The marketing page, serving
+   * cached static files, hit it every time.
+   */
+  useEffect(() => {
+    const image = afterRef.current;
+    if (image?.complete && image.naturalWidth) adoptImage(image);
+  }, [afterUrl, adoptImage]);
 
   const updatePositionFromClientX = useCallback((clientX: number) => {
     const element = frameRef.current;
@@ -189,14 +223,11 @@ export function BeforeAfterSlider({
         {/* Result layer, on the transparency board */}
         <div className="checkerboard absolute inset-0">
           <img
+            ref={afterRef}
             src={afterUrl}
             alt={alt}
             draggable={false}
-            onLoad={(event) => {
-              const { naturalWidth, naturalHeight } = event.currentTarget;
-              if (naturalWidth && naturalHeight) setAspect(naturalWidth / naturalHeight);
-              setLoaded(true);
-            }}
+            onLoad={(event) => adoptImage(event.currentTarget)}
             className={cn(
               'pointer-events-none absolute inset-0 size-full object-contain',
               'transition-opacity duration-500',

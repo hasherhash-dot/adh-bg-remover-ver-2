@@ -238,23 +238,6 @@ function Result() {
               maxViewportHeight={74}
             />
 
-            {/* The edge detail belongs to this result, so it overlaps the
-                frame it came from instead of sitting in its own card. */}
-            <div className="mt-4 lg:absolute lg:-bottom-10 lg:right-[-2.5rem] lg:mt-0 lg:w-[19rem]">
-              <div className="overflow-hidden rounded-lg border border-line bg-paper-raised shadow-float">
-                <img
-                  src={`${S}/hair-after.webp`}
-                  alt="Hair at native resolution after removal, on a transparency grid"
-                  width={760}
-                  height={520}
-                  loading="lazy"
-                  className="checkerboard w-full"
-                />
-                <p className="px-3.5 py-2.5 text-[11px] text-ink-subtle">
-                  Hair at 100% — individual strands kept
-                </p>
-              </div>
-            </div>
           </Reveal>
 
           <div className="lg:pt-2">
