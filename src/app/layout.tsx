@@ -85,7 +85,17 @@ const JS_FLAG = "document.documentElement.classList.add('js')";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${display.variable}`}>
+    // `suppressHydrationWarning` covers the `js` class that the inline script
+    // below adds before React hydrates. That mismatch on <html> is deliberate
+    // and unavoidable while the class must exist before first paint; without
+    // this, every page logs a hydration error in development for a difference
+    // we created on purpose. It applies to this element's own attributes only,
+    // never to a descendant.
+    <html
+      lang="en"
+      className={`${inter.variable} ${display.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         {/* Marks the document as scripted before the first paint. The
             scroll-reveal animations hide their content until it is observed,

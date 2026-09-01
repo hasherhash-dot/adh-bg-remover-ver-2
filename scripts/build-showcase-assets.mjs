@@ -37,7 +37,7 @@ const SOURCES = [
   { key: 'stripes', file: 'debug/input/stripes-on-stripes.webp', width: 760 },
   { key: 'product', file: 'debug/input/car.jpg', width: 640 },
   { key: 'food', file: 'debug/input/food.jpg', width: 640 },
-  { key: 'animal', file: 'debug/input/animal.jpg', width: 560 },
+  { key: 'animal', file: 'debug/input/animal.jpg', width: 1000 },
   { key: 'girl', file: 'debug/input/girl.jpg', width: 400 },
   { key: 'dress', file: 'debug/input/monochrome-dress.webp', width: 400 },
 ];

@@ -3,16 +3,14 @@ import {
   ArrowRight,
   ArrowUpRight,
   Check,
-  Crop,
   Download,
   ImageOff,
   Layers,
   Lock,
   Maximize,
   Scissors,
-  ShieldCheck,
+  Sparkles,
   Upload,
-  Wand2,
 } from 'lucide-react';
 import { SiteShell } from '@/components/layout/site-shell';
 import { cn } from '@/lib/utils';
@@ -22,12 +20,13 @@ import { Button } from '@/components/ui/button';
 import { Faq } from '@/components/marketing/faq';
 import { JsonLd } from '@/components/marketing/json-ld';
 import { Reveal } from '@/components/marketing/product-visuals';
-import {
-  LiveBackgroundPicker,
-  LiveBatchQueue,
-  LiveEditor,
-  WhenNear,
-} from '@/components/marketing/live-demo';
+import { HeroScene } from '@/components/marketing/hero-scene';
+import { BackgroundSwap } from '@/components/marketing/background-swap';
+import { EditorPreview } from '@/components/marketing/editor-preview';
+import { BatchStrip } from '@/components/marketing/batch-strip';
+import { EdgeCrops } from '@/components/marketing/edge-crops';
+import { ResolutionProof } from '@/components/marketing/resolution-proof';
+import { PrivacyFlow } from '@/components/marketing/privacy-flow';
 import {
   BRAND,
   COMPARISON_ROWS,
@@ -50,14 +49,27 @@ const S = '/showcase';
 /**
  * Homepage.
  *
- * Built out of the product rather than about it. The comparison slider, the
- * background picker, the editor and the batch queue on this page are the same
- * components the application uses, fed with real results from public/showcase —
- * not screenshots and not replicas, so none of it can drift.
+ * The governing rule is: show the capability, do not describe it. Every claim
+ * this page makes has a picture or a control attached to it, and the ten things
+ * the product actually does are each demonstrated by something on screen rather
+ * than by a paragraph in a card.
  *
- * Rhythm is deliberate: light, full-bleed inset, light, bento, quiet, navy,
- * light, navy. No two adjacent sections share a shape, which is what stops the
- * page reading as a stack of equal rectangles.
+ * That is the second attempt at the idea. The first mounted the real editor,
+ * batch queue and background picker directly here, which was accurate but
+ * turned a landing page into an application dashboard. These demonstrations are
+ * DOM and CSS only — no canvas, no blob compositing, no animation library and
+ * no application components — so each one communicates exactly one capability
+ * and costs almost nothing to render.
+ *
+ * Imagery is art-directed rather than accumulated: five recurring subjects,
+ * every one of them real output from the ADH engine via scripts/build-showcase-
+ * assets.mjs and scripts/build-showcase-crops.mjs. The close crops are at native
+ * resolution, because a resampled edge would prove nothing about alpha quality.
+ *
+ * Rhythm alternates white, grey and navy, and no two adjacent sections share a
+ * column count or a card treatment. The quiet sections — how it works, privacy,
+ * the comparison table — are quiet on purpose, so the loud ones have somewhere
+ * to be loud.
  */
 export default function HomePage() {
   const graph = buildGraph([
@@ -74,7 +86,11 @@ export default function HomePage() {
       <Hero />
       <Result />
       <HowItWorks />
-      <Capabilities />
+      <BackgroundSection />
+      <EditorSection />
+      <BatchSection />
+      <EdgeSection />
+      <ResolutionAndPrivacy />
       <Comparison />
       <Ecosystem />
       <FaqSection />
@@ -85,12 +101,18 @@ export default function HomePage() {
 
 /* ---------------------------------------------------------------- shared -- */
 
-function Eyebrow({ children, tone = 'accent' }: { children: React.ReactNode; tone?: 'accent' | 'light' }) {
+function Eyebrow({
+  children,
+  tone = 'accent',
+}: {
+  children: React.ReactNode;
+  tone?: 'accent' | 'light';
+}) {
   return (
     <p
       className={cn(
-        'text-[11px] font-semibold uppercase tracking-[0.12em]',
-        tone === 'light' ? 'text-white/55' : 'text-accent',
+        'text-[12px] font-semibold uppercase tracking-[0.12em]',
+        tone === 'light' ? 'text-white/60' : 'text-accent',
       )}
     >
       {children}
@@ -98,6 +120,14 @@ function Eyebrow({ children, tone = 'accent' }: { children: React.ReactNode; ton
   );
 }
 
+/**
+ * Section heading.
+ *
+ * Sized up deliberately. The previous pass capped at 41px and set feature
+ * headings at 17px, which is most of why the page read as a document rather
+ * than a product — the type was doing filing-cabinet work. If something only
+ * fits at a smaller size, the layout is wrong, not the type.
+ */
 function Heading({
   id,
   children,
@@ -113,13 +143,35 @@ function Heading({
     <h2
       id={id}
       className={cn(
-        'font-display text-[1.9rem] font-bold leading-[1.1] tracking-[-0.025em] sm:text-[2.6rem]',
+        'font-display text-[2rem] font-bold leading-[1.06] tracking-[-0.03em] sm:text-[2.6rem] lg:text-[3.1rem]',
         tone === 'light' ? 'text-white' : 'text-ink',
         className,
       )}
     >
       {children}
     </h2>
+  );
+}
+
+function Lede({
+  children,
+  tone = 'ink',
+  className,
+}: {
+  children: React.ReactNode;
+  tone?: 'ink' | 'light';
+  className?: string;
+}) {
+  return (
+    <p
+      className={cn(
+        'text-[17px] leading-relaxed',
+        tone === 'light' ? 'text-white/70' : 'text-ink-muted',
+        className,
+      )}
+    >
+      {children}
+    </p>
   );
 }
 
@@ -137,24 +189,25 @@ function Hero() {
     <section className="relative overflow-hidden border-b border-line">
       <div className="grid-backdrop pointer-events-none absolute inset-0" aria-hidden />
 
-      <div className="relative mx-auto grid max-w-[92rem] items-center gap-10 px-5 pb-16 pt-12 sm:px-8 lg:grid-cols-[minmax(0,34rem)_minmax(0,1fr)] lg:gap-14 lg:pb-24 lg:pt-20">
-        {/* Left: the claim. Kept narrow so the product has the room. */}
-        <div className="lg:pr-4">
-          <h1 className="font-display text-[2.6rem] font-bold leading-[1.02] tracking-[-0.035em] text-ink sm:text-[3.4rem]">
-            Remove image backgrounds{' '}
-            <span className="text-accent">in seconds.</span>
+      <div className="relative mx-auto grid max-w-[92rem] items-center gap-12 px-5 pb-20 pt-12 sm:px-8 lg:grid-cols-[minmax(0,42%)_minmax(0,58%)] lg:gap-10 lg:pb-28 lg:pt-20">
+        <div className="lg:pr-6">
+          <h1 className="font-display text-[2.75rem] font-bold leading-[1.01] tracking-[-0.038em] text-ink sm:text-[3.5rem] lg:text-[4.25rem]">
+            Remove image backgrounds <span className="text-accent">in seconds.</span>
           </h1>
-          <p className="mt-5 max-w-md text-[17px] leading-relaxed text-ink-muted">
-            Upload a photo and download a transparent PNG at the size you started with.
-          </p>
 
-          <ul className="mt-8 grid max-w-md grid-cols-2 gap-x-4 gap-y-5">
+          <Lede className="mt-6 max-w-md">
+            Upload a photo and download a transparent PNG at the size you started with.
+          </Lede>
+
+          <ul className="mt-9 grid max-w-md grid-cols-2 gap-x-5 gap-y-6">
             {TRUST.map((item) => (
-              <li key={item.label} className="flex gap-2.5">
-                <item.icon className="mt-0.5 size-4 shrink-0 text-accent" aria-hidden />
+              <li key={item.label} className="flex gap-3">
+                <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-md border border-line bg-paper-raised shadow-subtle">
+                  <item.icon className="size-4 text-accent" aria-hidden />
+                </span>
                 <span>
-                  <span className="block text-[13px] font-semibold text-ink">{item.label}</span>
-                  <span className="mt-0.5 block text-[12px] leading-snug text-ink-subtle">
+                  <span className="block text-[14px] font-semibold text-ink">{item.label}</span>
+                  <span className="mt-0.5 block text-[13px] leading-snug text-ink-subtle">
                     {item.note}
                   </span>
                 </span>
@@ -163,46 +216,19 @@ function Hero() {
           </ul>
         </div>
 
-        {/* Right: the product. The uploader sits in front of a real result so
-            upload target and finished cutout are both visible without
-            scrolling. The result panel is allowed to bleed off the right edge
-            on wide screens — a composition rather than a boxed widget. */}
-        <div className="relative lg:min-h-[34rem]">
-          <div
-            className="pointer-events-none absolute -right-20 top-2 hidden w-[26rem] xl:block 2xl:-right-28 2xl:w-[30rem]"
-            aria-hidden
-          >
-            <div className="checkerboard overflow-hidden rounded-lg border border-line shadow-float">
-              <img
-                src={`${S}/hero-after.webp`}
-                alt=""
-                width={801}
-                height={1200}
-                className="h-[30rem] w-full object-cover object-top"
-              />
-            </div>
-            <span className="absolute -left-3 bottom-6 flex items-center gap-2 rounded-md border border-line bg-paper-raised px-3 py-2 shadow-float">
-              <Download className="size-3.5 text-navy" aria-hidden />
-              <span className="text-[11px] font-semibold text-ink">801 × 1200 PNG</span>
-            </span>
+        {/* The product scene. The uploader is the front object; behind it a
+            real result wipes in from the original, so the proposition is
+            visible before a word is read. */}
+        <HeroScene
+          beforeUrl={`${S}/hero-before.webp`}
+          afterUrl={`${S}/hero-after.webp`}
+          width={801}
+          height={1200}
+        >
+          <div className="p-5 sm:p-6">
+            <BackgroundRemoverStudio />
           </div>
-
-          <div className="relative z-10 overflow-hidden rounded-lg border border-line bg-paper-raised shadow-float xl:max-w-[38rem]">
-            <div className="flex items-center gap-2 border-b border-line bg-paper-sunken px-4 py-3">
-              <span className="flex gap-1.5" aria-hidden>
-                <span className="size-2.5 rounded-full bg-accent" />
-                <span className="size-2.5 rounded-full bg-steel" />
-                <span className="size-2.5 rounded-full bg-line-strong" />
-              </span>
-              <span className="ml-1 text-[11px] font-medium tracking-wide text-ink-subtle">
-                {BRAND.name}
-              </span>
-            </div>
-            <div className="p-5 sm:p-7">
-              <BackgroundRemoverStudio />
-            </div>
-          </div>
-        </div>
+        </HeroScene>
       </div>
     </section>
   );
@@ -211,10 +237,26 @@ function Hero() {
 /* ---------------------------------------------------------------- result -- */
 
 const RESULT_POINTS = [
-  { icon: Maximize, label: 'Original dimensions kept' },
-  { icon: Scissors, label: 'Soft edges, not a hard cut' },
-  { icon: Layers, label: 'Genuine transparent PNG' },
-  { icon: ImageOff, label: 'No watermark' },
+  {
+    icon: Maximize,
+    label: 'Full resolution',
+    note: 'Original dimensions preserved.',
+  },
+  {
+    icon: Scissors,
+    label: 'Fine edges',
+    note: 'Hair and soft boundaries retained.',
+  },
+  {
+    icon: Layers,
+    label: 'Transparent PNG',
+    note: 'Ready for design or ecommerce.',
+  },
+  {
+    icon: ImageOff,
+    label: 'No watermark',
+    note: 'The downloaded result stays clean.',
+  },
 ];
 
 function Result() {
@@ -223,47 +265,40 @@ function Result() {
       <div className="mx-auto max-w-[92rem] px-5 py-20 sm:px-8 lg:py-28">
         <div className="max-w-2xl">
           <Eyebrow>The result</Eyebrow>
-          <Heading id="result" className="mt-3">
-            A real cut-out, not a preview
+          <Heading id="result" className="mt-4">
+            Drag it. This is the actual output.
           </Heading>
         </div>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[minmax(0,2.2fr)_minmax(0,1fr)] lg:gap-12">
-          {/* The slider is the product's own component, zoom and all. */}
-          <Reveal className="relative">
+        <div className="mt-12 grid gap-10 lg:grid-cols-[minmax(0,1.9fr)_minmax(0,1fr)] lg:gap-14">
+          {/* The product's own slider, at the largest size on the page. */}
+          <Reveal>
             <BeforeAfterSlider
               beforeUrl={`${S}/portrait-before.webp`}
               afterUrl={`${S}/portrait-after.webp`}
               alt="A portrait before and after its background was removed"
-              maxViewportHeight={74}
+              maxViewportHeight={80}
             />
-
           </Reveal>
 
-          <div className="lg:pt-2">
-            <ul className="flex flex-col gap-4">
+          <div className="lg:pt-4">
+            <ul className="flex flex-col gap-7">
               {RESULT_POINTS.map((point) => (
-                <li key={point.label} className="flex items-center gap-3">
-                  <span className="flex size-9 shrink-0 items-center justify-center rounded-md border border-line bg-paper-raised">
-                    <point.icon className="size-4 text-navy" aria-hidden />
+                <li key={point.label} className="flex gap-4">
+                  <span className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-line bg-paper-raised shadow-subtle">
+                    <point.icon className="size-5 text-navy" aria-hidden />
                   </span>
-                  <span className="text-[15px] font-medium text-ink">{point.label}</span>
+                  <span>
+                    <span className="block font-display text-[19px] font-semibold text-ink">
+                      {point.label}
+                    </span>
+                    <span className="mt-1 block text-[15px] leading-relaxed text-ink-muted">
+                      {point.note}
+                    </span>
+                  </span>
                 </li>
               ))}
             </ul>
-
-            <dl className="mt-8 grid grid-cols-3 gap-px overflow-hidden rounded-md border border-line bg-line text-center">
-              {[
-                ['Output', '900 × 1200'],
-                ['Format', 'PNG · RGBA'],
-                ['Size', '1.5 MB'],
-              ].map(([label, value]) => (
-                <div key={label} className="bg-paper-raised px-2 py-3">
-                  <dt className="text-[10px] uppercase tracking-wider text-ink-subtle">{label}</dt>
-                  <dd className="mt-1 text-[13px] font-semibold tabular-nums text-ink">{value}</dd>
-                </div>
-              ))}
-            </dl>
           </div>
         </div>
       </div>
@@ -273,33 +308,35 @@ function Result() {
 
 /* --------------------------------------------------------- how it works -- */
 
-const STEP_ICONS = [Upload, Wand2, Download];
+const STEP_ICONS = [Upload, Sparkles, Download];
 
 function HowItWorks() {
   return (
     <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24" aria-labelledby="how">
       <Eyebrow>Three steps</Eyebrow>
-      <Heading id="how" className="mt-3">
+      <Heading id="how" className="mt-4">
         How it works
       </Heading>
 
-      <ol className="relative mt-12 grid gap-10 sm:grid-cols-3 sm:gap-8">
-        <span
-          className="pointer-events-none absolute left-[16%] right-[16%] top-6 hidden border-t border-dashed border-line-strong sm:block"
-          aria-hidden
-        />
+      <ol className="mt-12 grid gap-8 sm:grid-cols-3">
         {HOW_IT_WORKS.map((step, index) => {
           const Icon = STEP_ICONS[index] ?? Upload;
           return (
-            <li key={step.name} className="group relative">
-              <span className="relative z-10 flex size-12 items-center justify-center rounded-full border border-line bg-paper-raised shadow-subtle transition-transform duration-200 group-hover:-translate-y-0.5">
-                <Icon className="size-5 text-navy" aria-hidden />
-                <span className="absolute -right-1 -top-1 flex size-5 items-center justify-center rounded-full bg-accent text-[10px] font-bold text-white">
-                  {index + 1}
+            <li key={step.name}>
+              {/* A small product frame rather than an icon in a circle: each
+                  step shows the state the interface is actually in. */}
+              <div className="relative overflow-hidden rounded-lg border border-line bg-paper-sunken">
+                <StepVisual index={index} />
+                <span className="absolute left-3 top-3 flex size-7 items-center justify-center rounded-full bg-ink text-[11px] font-bold text-white">
+                  {String(index + 1).padStart(2, '0')}
                 </span>
-              </span>
-              <h3 className="mt-5 font-display text-[17px] font-semibold text-ink">{step.name}</h3>
-              <p className="mt-2 max-w-xs text-sm leading-relaxed text-ink-muted">{step.text}</p>
+              </div>
+
+              <h3 className="mt-5 flex items-center gap-2 font-display text-[21px] font-semibold text-ink">
+                <Icon className="size-4.5 text-accent" aria-hidden />
+                {step.name}
+              </h3>
+              <p className="mt-2 text-[15px] leading-relaxed text-ink-muted">{step.text}</p>
             </li>
           );
         })}
@@ -308,201 +345,286 @@ function HowItWorks() {
   );
 }
 
-/* ---------------------------------------------------------- capabilities -- */
+/** The three states, drawn small. Compact by design — this is a breather. */
+function StepVisual({ index }: { index: number }) {
+  if (index === 0) {
+    return (
+      <div className="flex aspect-video items-center justify-center p-5">
+        <span className="flex size-full flex-col items-center justify-center gap-2 rounded-md border-2 border-dashed border-control bg-paper-raised">
+          <Upload className="size-6 text-accent" aria-hidden />
+          <span className="text-[12px] font-medium text-ink-subtle">Drop an image</span>
+        </span>
+      </div>
+    );
+  }
 
-function Card({
-  children,
-  className,
-  tone = 'light',
-}: {
-  children: React.ReactNode;
-  className?: string;
-  tone?: 'light' | 'navy';
-}) {
+  if (index === 1) {
+    return (
+      <div className="relative aspect-video overflow-hidden">
+        <img
+          src={`${S}/hero-before.webp`}
+          alt=""
+          aria-hidden
+          loading="lazy"
+          className="size-full object-cover object-top"
+        />
+        {/* The same scan cue the hero uses, at small scale. */}
+        <span
+          className="absolute inset-x-0 h-16 bg-gradient-to-b from-transparent via-accent/45 to-transparent"
+          style={{ animation: 'var(--animate-sweep)' }}
+          aria-hidden
+        />
+      </div>
+    );
+  }
+
   return (
-    <div
-      className={cn(
-        'flex flex-col overflow-hidden rounded-lg border p-6 transition-shadow duration-200 hover:shadow-raised sm:p-7',
-        tone === 'navy' ? 'border-navy bg-navy' : 'border-line bg-paper-raised',
-        className,
-      )}
-    >
-      {children}
+    <div className="checkerboard relative aspect-video">
+      <img
+        src={`${S}/hero-after.webp`}
+        alt=""
+        aria-hidden
+        loading="lazy"
+        className="size-full object-cover object-top"
+      />
+      <span className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-md border border-line bg-paper-raised px-2.5 py-1.5 shadow-subtle">
+        <Download className="size-3.5 text-navy" aria-hidden />
+        <span className="text-[11px] font-semibold text-ink">PNG</span>
+      </span>
     </div>
   );
 }
 
-function CardHead({
-  title,
-  body,
-  tone = 'light',
-}: {
-  title: string;
-  body: string;
-  tone?: 'light' | 'navy';
-}) {
-  return (
-    <div>
-      <h3
-        className={cn(
-          'font-display text-[17px] font-semibold tracking-tight',
-          tone === 'navy' ? 'text-white' : 'text-ink',
-        )}
-      >
-        {title}
-      </h3>
-      <p
-        className={cn(
-          'mt-1.5 text-sm leading-relaxed',
-          tone === 'navy' ? 'text-white/70' : 'text-ink-muted',
-        )}
-      >
-        {body}
-      </p>
-    </div>
-  );
-}
+/* --------------------------------------------------- background swapping -- */
 
-const BATCH_SAMPLES = [
-  { filename: 'portrait-01.jpg', originalUrl: `${S}/girl-before.webp`, resultUrl: `${S}/girl-after.webp`, width: 600, height: 399 },
-  { filename: 'product-02.jpg', originalUrl: `${S}/product-before.webp`, resultUrl: `${S}/product-after.webp`, width: 480, height: 360 },
-  { filename: 'lookbook-03.jpg', originalUrl: `${S}/dress-before.webp`, resultUrl: `${S}/dress-after.webp`, width: 600, height: 800 },
-  { filename: 'studio-04.jpg', originalUrl: `${S}/stripes-before.webp`, width: 550, height: 759 },
+const SWAP_OPTIONS = [
+  {
+    id: 'transparent',
+    label: 'Transparent',
+    note: 'The download is a PNG with a real alpha channel — the default.',
+  },
+  {
+    id: 'white',
+    label: 'White',
+    color: '#ffffff',
+    note: 'What most marketplaces ask for in a product listing.',
+  },
+  {
+    id: 'black',
+    label: 'Black',
+    color: '#0e0e10',
+    note: 'Composited at full resolution, so the download matches the preview.',
+  },
+  {
+    id: 'brand',
+    label: 'ADH red',
+    color: '#cd0f36',
+    note: 'Any colour you like — the picker takes a hex value or a colour wheel.',
+  },
+  {
+    id: 'photo',
+    label: 'Photo',
+    image: `${S}/food-before.webp`,
+    note: 'Backdrop images are set in the editor, one step on from the colour picker.',
+  },
 ];
 
-function Capabilities() {
+function BackgroundSection() {
   return (
-    <section className="border-y border-line bg-paper-sunken" aria-labelledby="capabilities">
-      <div className="mx-auto max-w-[92rem] px-5 py-20 sm:px-8 lg:py-28">
-        <div className="max-w-xl">
-          <Eyebrow>What it does</Eyebrow>
-          <Heading id="capabilities" className="mt-3">
-            More than a one-click cut-out
+    <section className="relative overflow-hidden bg-navy" aria-labelledby="backgrounds">
+      <div className="dot-field pointer-events-none absolute inset-0 opacity-[0.12]" aria-hidden />
+
+      <div className="relative mx-auto max-w-[88rem] px-5 py-20 sm:px-8 lg:py-28">
+        <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] lg:items-center lg:gap-16">
+          <div>
+            <Eyebrow tone="light">Straight after removal</Eyebrow>
+            <Heading id="backgrounds" tone="light" className="mt-4">
+              A cut-out is the start, not the end.
+            </Heading>
+            <Lede tone="light" className="mt-6 max-w-md">
+              Once the background is gone, put anything behind it. Try it — the preview updates as
+              you pick.
+            </Lede>
+          </div>
+
+          <Reveal>
+            <BackgroundSwap
+              cutoutUrl={`${S}/animal-after.webp`}
+              alt="A tiger cut out from its background, shown on the selected backdrop"
+              width={1000}
+              height={667}
+              options={SWAP_OPTIONS}
+            />
+          </Reveal>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------------------------------------------------------------- editor -- */
+
+function EditorSection() {
+  return (
+    <section className="border-b border-line" aria-labelledby="editor">
+      <div className="mx-auto max-w-[88rem] px-5 py-20 sm:px-8 lg:py-28">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div className="max-w-2xl">
+            <Eyebrow>Built in</Eyebrow>
+            <Heading id="editor" className="mt-4">
+              There is an editor behind it.
+            </Heading>
+          </div>
+          <Lede className="max-w-sm">
+            Crop, scale, rotate, pad and recolour without opening another app. Change the ratio or
+            the padding here to see it move.
+          </Lede>
+        </div>
+
+        <Reveal className="mt-12">
+          <EditorPreview
+            cutoutUrl={`${S}/animal-after.webp`}
+            alt="A cut-out in the editor's canvas"
+            filename="tiger.png"
+          />
+        </Reveal>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------------------------------------------- batch -- */
+
+const BATCH_ITEMS = [
+  { filename: 'portrait-01.jpg', beforeUrl: `${S}/girl-before.webp`, afterUrl: `${S}/girl-after.webp` },
+  { filename: 'vehicle-02.jpg', beforeUrl: `${S}/product-before.webp`, afterUrl: `${S}/product-after.webp` },
+  { filename: 'lookbook-03.jpg', beforeUrl: `${S}/dress-before.webp`, afterUrl: `${S}/dress-after.webp` },
+  { filename: 'studio-04.jpg', beforeUrl: `${S}/stripes-before.webp`, afterUrl: `${S}/stripes-after.webp` },
+  { filename: 'menu-05.jpg', beforeUrl: `${S}/food-before.webp`, afterUrl: `${S}/food-after.webp` },
+];
+
+function BatchSection() {
+  return (
+    <section className="border-b border-line bg-paper-sunken" aria-labelledby="batch">
+      <div className="mx-auto max-w-[88rem] px-5 py-20 sm:px-8 lg:py-28">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div className="max-w-2xl">
+            <Eyebrow>In bulk</Eyebrow>
+            <Heading id="batch" className="mt-4">
+              Twenty at a time, one ZIP at the end.
+            </Heading>
+          </div>
+          <Lede className="max-w-sm">
+            Every image reports its own state. Anything that fails can be retried on its own,
+            without losing the rest of the run.
+          </Lede>
+        </div>
+
+        <div className="mt-12">
+          <BatchStrip items={BATCH_ITEMS} />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ----------------------------------------------------------- edge quality -- */
+
+const EDGE_CROPS = [
+  {
+    key: 'hair',
+    beforeUrl: `${S}/hair-before.webp`,
+    afterUrl: `${S}/hair-after.webp`,
+    title: 'Hair',
+    note: 'Individual strands, not a traced outline.',
+    width: 760,
+    height: 520,
+    span: 'lg:col-span-5',
+  },
+  {
+    key: 'fur',
+    beforeUrl: `${S}/fur-before.webp`,
+    afterUrl: `${S}/fur-after.webp`,
+    title: 'Fur and whiskers',
+    note: 'Thin, light-coloured detail against a dark background.',
+    width: 430,
+    height: 320,
+    span: 'lg:col-span-3',
+  },
+  {
+    key: 'fringe',
+    beforeUrl: `${S}/fringe-before.webp`,
+    afterUrl: `${S}/fringe-after.webp`,
+    title: 'Frayed fabric',
+    note: 'Loose threads over a soft, low-contrast sky.',
+    width: 630,
+    height: 380,
+    span: 'lg:col-span-4',
+  },
+];
+
+function EdgeSection() {
+  return (
+    <section className="border-b border-line" aria-labelledby="edges">
+      <div className="mx-auto max-w-[88rem] px-5 py-20 sm:px-8 lg:py-28">
+        <div className="max-w-2xl">
+          <Eyebrow>Where most tools fail</Eyebrow>
+          <Heading id="edges" className="mt-4">
+            Look at the edges.
           </Heading>
         </div>
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-12">
-          {/* Full resolution — the headline claim, shown as three states. */}
-          <Reveal className="lg:col-span-8">
-            <Card className="h-full">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <CardHead
-                  title="Full resolution, free"
-                  body="Detection runs small; the mask is applied to your original."
-                />
-                <span className="flex items-center gap-2.5 rounded-md border border-line bg-paper-sunken px-3 py-2">
-                  <span className="text-[11px] font-medium tabular-nums text-ink-muted">6000 × 4000</span>
-                  <ArrowRight className="size-3.5 text-accent" aria-hidden />
-                  <span className="text-[11px] font-semibold tabular-nums text-ink">6000 × 4000</span>
-                </span>
-              </div>
-              <div className="mt-6 grid gap-3 sm:grid-cols-3">
-                {[
-                  { label: 'Uploaded', src: `${S}/food-before.webp`, bg: 'bg-paper-sunken' },
-                  { label: 'Cut out', src: `${S}/food-after.webp`, bg: 'checkerboard' },
-                  { label: 'On white', src: `${S}/food-after.webp`, bg: 'bg-white' },
-                ].map((shot) => (
-                  <figure key={shot.label} className="m-0">
-                    <div className={cn('aspect-4/3 overflow-hidden rounded-md border border-line', shot.bg)}>
-                      <img
-                        src={shot.src}
-                        alt={`${shot.label} example`}
-                        loading="lazy"
-                        className="size-full object-contain"
-                      />
-                    </div>
-                    <figcaption className="mt-2 text-[11px] text-ink-subtle">{shot.label}</figcaption>
-                  </figure>
-                ))}
-              </div>
-            </Card>
-          </Reveal>
+        <EdgeCrops crops={EDGE_CROPS} className="mt-10" />
+      </div>
+    </section>
+  );
+}
 
-          {/* Privacy — the one navy block in this grid. */}
-          <Reveal delay={60} className="lg:col-span-4">
-            <Card tone="navy" className="h-full justify-between">
-              <div>
-                <span className="flex size-10 items-center justify-center rounded-md border border-white/20 bg-white/10">
-                  <ShieldCheck className="size-5 text-white" aria-hidden />
-                </span>
-                <div className="mt-5">
-                  <CardHead
-                    tone="navy"
-                    title="Your images are not kept"
-                    body="Processed in memory and discarded once the result is sent."
-                  />
-                </div>
-              </div>
-              <ul className="mt-6 flex flex-col gap-2.5">
-                {['No account required', 'No watermark', 'History stays in your browser'].map((line) => (
-                  <li key={line} className="flex items-center gap-2 text-[13px] text-white/85">
-                    <Check className="size-3.5 shrink-0 text-accent" aria-hidden />
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </Card>
-          </Reveal>
+/* --------------------------------------------- full resolution + privacy -- */
 
-          {/* The real editor. */}
-          <Reveal delay={40} className="lg:col-span-7">
-            <Card className="h-full">
-              <div className="mb-5 flex items-center gap-2">
-                <Crop className="size-4 text-navy" aria-hidden />
-                <CardHead
-                  title="Edit after removing"
-                  body="Crop, scale, rotate and reposition without another app."
-                />
-              </div>
-              <WhenNear minHeight={360} label="Loading the editor">
-                <LiveEditor src={`${S}/product-after.webp`} filename="vehicle.png" />
-              </WhenNear>
-            </Card>
-          </Reveal>
+/**
+ * The two claims that need evidence rather than a card, laid out as an
+ * editorial spread: resolution takes the wide top half, privacy the narrower
+ * block beneath it. Different weights, because they are not equally important.
+ */
+function ResolutionAndPrivacy() {
+  return (
+    <section className="border-b border-line bg-paper-sunken" aria-labelledby="resolution">
+      <div className="mx-auto max-w-[88rem] px-5 py-20 sm:px-8 lg:py-28">
+        <div className="flex flex-wrap items-end justify-between gap-6">
+          <div className="max-w-2xl">
+            <Eyebrow>Nothing is downscaled</Eyebrow>
+            <Heading id="resolution" className="mt-4">
+              24 megapixels in. 24 megapixels out.
+            </Heading>
+          </div>
+          <Lede className="max-w-sm">
+            Detection runs on a small copy; the mask it produces is applied to your original. The
+            free tier is not a preview of a paid one.
+          </Lede>
+        </div>
 
-          {/* The real background picker. */}
-          <Reveal delay={80} className="lg:col-span-5">
-            <Card className="h-full">
-              <CardHead
-                title="Swap the background"
-                body="Transparent, white, black or any colour you pick."
-              />
-              <WhenNear minHeight={300} label="Loading backgrounds" className="mt-5">
-                <LiveBackgroundPicker src={`${S}/animal-after.webp`} />
-              </WhenNear>
-            </Card>
-          </Reveal>
+        <Reveal className="mt-12">
+          <ResolutionProof
+            beforeUrl={`${S}/food-before.webp`}
+            afterUrl={`${S}/food-after.webp`}
+            zoomBeforeUrl={`${S}/zoom-before.webp`}
+            zoomAfterUrl={`${S}/zoom-after.webp`}
+            zoomWidth={1020}
+            zoomHeight={750}
+            width={6000}
+            height={4000}
+          />
+        </Reveal>
 
-          {/* The real batch queue. */}
-          <Reveal delay={40} className="lg:col-span-7">
-            <Card className="h-full">
-              <CardHead
-                title="Process a set together"
-                body="Each image reports its own progress. One ZIP at the end."
-              />
-              <WhenNear minHeight={300} label="Loading the queue" className="mt-5">
-                <LiveBatchQueue samples={BATCH_SAMPLES} />
-              </WhenNear>
-            </Card>
-          </Reveal>
-
-          {/* Fine edges. */}
-          <Reveal delay={80} className="lg:col-span-5">
-            <Card className="h-full">
-              <CardHead
-                title="Fine edges"
-                body="Hair and fur keep partial transparency, so nothing looks stamped out."
-              />
-              <div className="checkerboard mt-5 flex-1 overflow-hidden rounded-md border border-line">
-                <img
-                  src={`${S}/hair-after.webp`}
-                  alt="Hair detail at full resolution on a transparency grid"
-                  loading="lazy"
-                  className="size-full object-cover"
-                />
-              </div>
-            </Card>
-          </Reveal>
+        <div className="mt-16 grid gap-10 border-t border-line pt-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] lg:gap-16">
+          <div>
+            <Eyebrow>Privacy</Eyebrow>
+            <h3 className="mt-4 font-display text-[26px] font-bold leading-tight tracking-[-0.02em] text-ink lg:text-[30px]">
+              Your image passes through. It does not stay.
+            </h3>
+          </div>
+          <PrivacyFlow />
         </div>
       </div>
     </section>
@@ -529,20 +651,24 @@ function Comparison() {
   const rows = COMPARISON_ROWS.filter((row) => KEY_ROWS.includes(row.feature));
 
   return (
-    <section className="mx-auto max-w-5xl px-5 py-20 sm:px-8 lg:py-24" aria-labelledby="comparison">
-      <div className="max-w-xl">
+    <section className="mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24" aria-labelledby="comparison">
+      <div className="max-w-2xl">
         <Eyebrow>Verified {COMPARISON_VERIFIED_ON}</Eyebrow>
-        <Heading id="comparison" className="mt-3">
+        <Heading id="comparison" className="mt-4">
           What &ldquo;free&rdquo; actually means
         </Heading>
       </div>
 
-      <div className="mt-10 grid gap-4 sm:grid-cols-3">
+      {/* The differences, at a size you can read across the room. The table
+          below is the evidence, not the design. */}
+      <div className="mt-10 grid gap-5 sm:grid-cols-3">
         {HEADLINES.map((item) => (
-          <div key={item.value} className="rounded-lg border border-line bg-paper-raised p-5">
-            <item.icon className="size-5 text-accent" aria-hidden />
-            <p className="mt-3 font-display text-[17px] font-semibold text-ink">{item.value}</p>
-            <p className="mt-1 text-[13px] text-ink-subtle">{item.note}</p>
+          <div key={item.value} className="rounded-xl border border-line bg-paper-raised p-6">
+            <item.icon className="size-6 text-accent" aria-hidden />
+            <p className="mt-4 font-display text-[24px] font-bold leading-tight tracking-[-0.02em] text-ink">
+              {item.value}
+            </p>
+            <p className="mt-1.5 text-[14px] text-ink-subtle">{item.note}</p>
           </div>
         ))}
       </div>
@@ -555,13 +681,22 @@ function Comparison() {
             </caption>
             <thead>
               <tr>
-                <th scope="col" className="bg-paper-sunken px-5 py-4 text-left font-display text-[13px] font-semibold text-ink-subtle">
+                <th
+                  scope="col"
+                  className="bg-paper-sunken px-5 py-4 text-left font-display text-[13px] font-semibold text-ink-subtle"
+                >
                   Feature
                 </th>
-                <th scope="col" className="bg-accent px-5 py-4 text-left font-display text-[13px] font-semibold text-white">
+                <th
+                  scope="col"
+                  className="bg-accent px-5 py-4 text-left font-display text-[13px] font-semibold text-white"
+                >
                   {BRAND.name}
                 </th>
-                <th scope="col" className="bg-paper-sunken px-5 py-4 text-left font-display text-[13px] font-semibold text-ink-subtle">
+                <th
+                  scope="col"
+                  className="bg-paper-sunken px-5 py-4 text-left font-display text-[13px] font-semibold text-ink-subtle"
+                >
                   {COMPETITOR.name}
                 </th>
               </tr>
@@ -589,8 +724,7 @@ function Comparison() {
       </div>
 
       <p className="mt-4 text-xs leading-relaxed text-ink-subtle">
-        Checked against {COMPETITOR.name}&apos;s own help pages,{' '}
-        {COMPARISON_VERIFIED_ON}.{' '}
+        Checked against {COMPETITOR.name}&apos;s own help pages, {COMPARISON_VERIFIED_ON}.{' '}
         {COMPETITOR.sources.map((source, index) => (
           <span key={source}>
             {index > 0 && ' · '}
@@ -616,16 +750,16 @@ function Ecosystem() {
     <section className="relative overflow-hidden bg-navy" aria-labelledby="ecosystem">
       <div className="dot-field pointer-events-none absolute inset-0 opacity-[0.12]" aria-hidden />
 
-      <div className="relative mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
-        <div className="max-w-xl">
+      <div className="relative mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-28">
+        <div className="max-w-2xl">
           <Eyebrow tone="light">The ADH toolkit</Eyebrow>
-          <Heading id="ecosystem" tone="light" className="mt-3">
+          <Heading id="ecosystem" tone="light" className="mt-4">
             Built by {ORGANISATION.name}
           </Heading>
-          <p className="mt-4 max-w-md text-[15px] leading-relaxed text-white/70">
-            We build brands, websites and apps for clients — and free tools like this one for
-            everyone else.
-          </p>
+          <Lede tone="light" className="mt-6 max-w-lg">
+            We build brands, websites and apps for clients in Atlanta — and free tools like this
+            one for everyone else.
+          </Lede>
         </div>
 
         <div className="mt-12 grid items-stretch gap-4 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_minmax(0,1fr)]">
@@ -634,19 +768,26 @@ function Ecosystem() {
             rel="noopener"
             className="group flex flex-col justify-between rounded-lg border border-white/15 bg-white/[0.06] p-6 transition-colors hover:border-white/30"
           >
-            <span className="font-display text-[15px] font-semibold text-white">
+            <span className="font-display text-[17px] font-semibold text-white">
               {ORGANISATION.name}
             </span>
-            <span className="mt-6 flex items-center gap-1.5 text-[13px] text-white/60">
+            <span className="mt-8 flex items-center gap-1.5 text-[13px] text-white/60">
               Design &amp; development studio
-              <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden />
+              <ArrowUpRight
+                className="size-3.5 transition-transform group-hover:translate-x-0.5"
+                aria-hidden
+              />
             </span>
           </a>
 
           {/* The relationship, drawn rather than described. */}
           <div className="hidden items-center justify-center px-2 lg:flex" aria-hidden>
             <svg width="40" height="120" viewBox="0 0 40 120" fill="none" className="text-white/25">
-              <path d="M0 60 H16 M16 24 V96 M16 24 H40 M16 96 H40" stroke="currentColor" strokeWidth="1.5" />
+              <path
+                d="M0 60 H16 M16 24 V96 M16 24 H40 M16 96 H40"
+                stroke="currentColor"
+                strokeWidth="1.5"
+              />
               <circle cx="2" cy="60" r="2.5" fill="currentColor" />
             </svg>
           </div>
@@ -658,17 +799,20 @@ function Ecosystem() {
               rel="noopener"
               className="group flex flex-col justify-between rounded-lg border border-white/15 bg-white/[0.06] p-6 transition-colors hover:border-white/30"
             >
-              <span className="font-display text-[15px] font-semibold text-white">{tool.name}</span>
-              <span className="mt-6 flex items-center gap-1.5 text-[13px] text-white/60">
+              <span className="font-display text-[17px] font-semibold text-white">{tool.name}</span>
+              <span className="mt-8 flex items-center gap-1.5 text-[13px] text-white/60">
                 Compress &amp; convert
-                <ArrowUpRight className="size-3.5 transition-transform group-hover:translate-x-0.5" aria-hidden />
+                <ArrowUpRight
+                  className="size-3.5 transition-transform group-hover:translate-x-0.5"
+                  aria-hidden
+                />
               </span>
             </a>
           ))}
 
           <div className="flex flex-col justify-between rounded-lg border border-accent bg-accent/15 p-6">
-            <span className="font-display text-[15px] font-semibold text-white">{BRAND.name}</span>
-            <span className="mt-6 inline-flex w-fit rounded-full bg-accent px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
+            <span className="font-display text-[17px] font-semibold text-white">{BRAND.name}</span>
+            <span className="mt-8 inline-flex w-fit rounded-full bg-accent px-2.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-white">
               You are here
             </span>
           </div>
@@ -697,7 +841,7 @@ function FaqSection() {
   return (
     <section className="mx-auto max-w-3xl px-5 py-20 sm:px-8 lg:py-24" aria-labelledby="faq">
       <Eyebrow>Questions</Eyebrow>
-      <Heading id="faq" className="mt-3">
+      <Heading id="faq" className="mt-4">
         Before you upload
       </Heading>
       <Faq className="mt-10" items={FAQ} />
@@ -715,26 +859,26 @@ function FinalCta() {
       {/* A real cut-out bleeding in, so the last thing on the page is still
           the product rather than a poster. */}
       <div
-        className="pointer-events-none absolute -right-8 bottom-0 hidden w-[22rem] lg:block"
+        className="pointer-events-none absolute -right-8 bottom-0 hidden w-[24rem] lg:block"
         aria-hidden
       >
         <img
           src={`${S}/hero-after.webp`}
           alt=""
           loading="lazy"
-          className="h-[22rem] w-full object-cover object-top opacity-90"
+          className="h-[24rem] w-full object-cover object-top opacity-90"
         />
       </div>
 
-      <div className="relative mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-24">
-        <div className="max-w-lg">
-          <h2 className="font-display text-[1.9rem] font-bold leading-tight tracking-[-0.025em] text-white sm:text-[2.6rem]">
+      <div className="relative mx-auto max-w-6xl px-5 py-20 sm:px-8 lg:py-28">
+        <div className="max-w-xl">
+          <h2 className="font-display text-[2.2rem] font-bold leading-[1.05] tracking-[-0.03em] text-white sm:text-[2.9rem]">
             Try it with your own photo.
           </h2>
-          <p className="mt-4 text-[15px] leading-relaxed text-white/70">
+          <Lede tone="light" className="mt-5">
             No account, no watermark, full resolution.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-4">
+          </Lede>
+          <div className="mt-9 flex flex-wrap items-center gap-4">
             <Button variant="accent" size="lg" asChild>
               <Link href="/remove-background">
                 Remove a background

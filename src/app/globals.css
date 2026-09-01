@@ -19,8 +19,14 @@
   --color-line: #e4e8ee;
   --color-line-strong: #c7cdd6;
   /* Boundary of an interactive control, where the border is the only thing
-     identifying it. Meets WCAG 1.4.11 against white. */
-  --color-control: #8e9aab;
+     identifying it.
+
+     Was #8e9aab, which the comment here claimed met WCAG 1.4.11 and did not:
+     it measured 2.85:1 on white and 2.53:1 on paper-sunken, against the 3:1 the
+     rule requires. Darkened by 9% along the same hue so it clears both surfaces
+     a control actually sits on — the outline Button and the dashed inputs are
+     identified by this border alone. */
+  --color-control: #818c9c;
   --color-ink: #000000;
   --color-ink-muted: #4a4a4a;
   --color-ink-subtle: #6d6d6d;
@@ -365,5 +371,102 @@
   }
   &::-webkit-scrollbar-track {
     background: transparent;
+  }
+}
+
+/* ==========================================================================
+   Homepage demonstration primitives
+
+   The marketing page shows the product working rather than describing it, and
+   every one of those demonstrations is DOM plus CSS — no canvas, no animation
+   library, no application component. What follows is the small set of moving
+   parts that needs real CSS rather than utility classes.
+
+   Everything here is a one-shot or a state transition. Nothing loops forever;
+   a page where things move continuously reads as decoration, not as product.
+   The global prefers-reduced-motion rule collapses each duration to ~0, and
+   because every animation below uses `both`, that lands on the FINISHED state
+   rather than the starting one — the story is told, just instantly.
+   ========================================================================== */
+
+@layer components {
+  /* --- hero: one panel that is itself the before -> after transition -----
+
+     The original is stacked over the cut-out and wiped away diagonally, so a
+     single object carries "photo in, transparency out". A skewed accent seam
+     travels with the wipe as the processing cue. */
+  .wipe-layer {
+    animation: wipe-reveal 1.6s var(--ease-in-out-soft) 0.35s both;
+  }
+
+  .wipe-seam {
+    animation: wipe-seam 1.6s var(--ease-in-out-soft) 0.35s both;
+  }
+
+  /* --- edge crops and background swap ---------------------------------- */
+
+  /* Cross-fade between two stacked images. Both stay in the DOM so neither
+     re-decodes on toggle, which is what makes the switch feel instant. */
+  .xfade {
+    transition: opacity 0.22s var(--ease-out-soft);
+  }
+
+  /* --- batch: a queue that advances once, when it is looked at ---------- */
+
+  /* The indeterminate bar. The real queue shows exactly this for a row that
+     is processing: the server sends no percentage, so neither do we. */
+  .indeterminate {
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--color-accent) 45%,
+      var(--color-accent) 55%,
+      transparent 100%
+    );
+    background-size: 220% 100%;
+    animation: indeterminate 1.15s linear infinite;
+  }
+
+  /* --- full resolution: 1:1 detail loupe -------------------------------- */
+
+  .loupe {
+    transition:
+      opacity 0.25s var(--ease-out-soft),
+      transform 0.35s var(--ease-out-soft);
+  }
+}
+
+@keyframes wipe-reveal {
+  0% {
+    clip-path: inset(0 0 0 0);
+  }
+  100% {
+    clip-path: inset(0 58% 0 0);
+  }
+}
+
+@keyframes wipe-seam {
+  0% {
+    left: 100%;
+    opacity: 0;
+  }
+  14% {
+    opacity: 1;
+  }
+  86% {
+    opacity: 1;
+  }
+  100% {
+    left: 42%;
+    opacity: 0;
+  }
+}
+
+@keyframes indeterminate {
+  0% {
+    background-position: 120% 0;
+  }
+  100% {
+    background-position: -120% 0;
   }
 }
