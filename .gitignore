@@ -26,3 +26,4 @@ debug/
 # 178MB per resolution. See models/README.md.
 models/*.onnx
 models/*.onnx.data
+design-handoff/
