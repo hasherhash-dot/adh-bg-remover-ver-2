@@ -65,6 +65,7 @@ export function ResolutionProof({
           alt="The original photograph before its background was removed"
           dimensions={`${width} × ${height}`}
           megapixels={megapixels}
+          aspect={width / height}
         />
 
         <div className="flex items-center justify-center gap-3 lg:flex-col lg:gap-2">
@@ -85,6 +86,7 @@ export function ResolutionProof({
           alt="The same photograph with its background removed, at the same size"
           dimensions={`${width} × ${height}`}
           megapixels={megapixels}
+          aspect={width / height}
           transparent
           emphasis
         />
@@ -166,6 +168,7 @@ function Frame({
   alt,
   dimensions,
   megapixels,
+  aspect,
   transparent = false,
   emphasis = false,
 }: {
@@ -174,6 +177,15 @@ function Frame({
   alt: string;
   dimensions: string;
   megapixels: number;
+  /**
+   * The source photograph's own ratio.
+   *
+   * Not a fixed value: the caption underneath prints the full dimensions, so
+   * the box has to be the shape of the whole picture. A hardcoded 3:2 silently
+   * cropped anything that was not 3:2 — showing part of an image while
+   * labelling it with the size of all of it.
+   */
+  aspect: number;
   transparent?: boolean;
   emphasis?: boolean;
 }) {
@@ -186,7 +198,13 @@ function Frame({
           emphasis ? 'border-accent shadow-raised' : 'border-line',
         )}
       >
-        <img src={src} alt={alt} loading="lazy" className="block aspect-3/2 w-full object-cover" />
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          style={{ aspectRatio: aspect }}
+          className="block w-full object-cover"
+        />
       </div>
       <figcaption className="mt-3 flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
         <span className="text-[13px] font-semibold text-ink">{label}</span>

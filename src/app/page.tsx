@@ -611,7 +611,7 @@ function ResolutionAndPrivacy() {
           <div className="max-w-2xl">
             <Eyebrow>Nothing is downscaled</Eyebrow>
             <Heading id="resolution" className="mt-4">
-              24 megapixels in. 24 megapixels out.
+              17 megapixels in. 17 megapixels out.
             </Heading>
           </div>
           <Lede className="max-w-sm">
@@ -628,8 +628,8 @@ function ResolutionAndPrivacy() {
             zoomAfterUrl={`${S}/res-zoom-after.webp`}
             zoomWidth={1020}
             zoomHeight={750}
-            width={6000}
-            height={4000}
+            width={5040}
+            height={3360}
           />
         </Reveal>
 

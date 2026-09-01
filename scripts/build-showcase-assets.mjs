@@ -111,21 +111,29 @@ const ASSETS = [
 
   /* -- Full resolution ----------------------------------------------------
 
-     Deliberately NOT cropped. The frames are labelled 6000 x 4000, so they
-     have to be the whole photograph — a crop under that label would be a lie,
-     and 6000x4000 is already 3:2, so the full frame fills a 3:2 box exactly.
-     The loupe below carries the actual proof. */
+     Deliberately NOT cropped. The frames are labelled with the source's real
+     dimensions, so they have to be the whole photograph — a crop under that
+     label would be a lie. ResolutionProof derives its frame aspect from the
+     width/height it is given for the same reason: a fixed aspect would crop
+     the picture to fit and quietly contradict the number printed beneath it.
+
+     The number follows the photograph. This source is 5040x3360 = 17 MP, so
+     the section says 17. It is not the largest file available -- food.jpg is
+     6000x4000 -- but that photograph was rejected on looks, and a claim nobody
+     stops to read is worth less than a smaller number on a picture that holds
+     the eye. If this asset is swapped again, the headline in page.tsx and the
+     width/height passed to ResolutionProof both have to move with it. */
   {
     key: 'res',
-    src: 'food.jpg',
+    src: 'burger.jpg',
     width: 900,
-    job: 'Full resolution — the complete 24 MP frame, in and out',
+    job: 'Full resolution — the complete 17 MP frame, in and out',
   },
   {
     key: 'res-zoom',
-    src: 'food.jpg',
-    crop: { left: 2000, top: 2400, width: 1020, height: 750 },
-    job: 'Full resolution — 1:1 detail, the evidence the numbers mean something',
+    src: 'burger.jpg',
+    crop: { left: 3000, top: 440, width: 1020, height: 750 },
+    job: 'Full resolution — 1:1 detail: sesame seeds, glaze and a clean bun edge',
   },
 
   /* -- A backdrop, not a subject ------------------------------------------

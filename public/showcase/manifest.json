@@ -1,5 +1,5 @@
 {
-  "generated": "2026-09-01T19:20:11.366Z",
+  "generated": "2026-09-01T20:18:36.084Z",
   "provider": "adh-onnx",
   "assets": [
     {
@@ -114,9 +114,9 @@
     },
     {
       "key": "res",
-      "job": "Full resolution — the complete 24 MP frame, in and out",
-      "source": "food.jpg",
-      "sourceSize": "6000x4000",
+      "job": "Full resolution — the complete 17 MP frame, in and out",
+      "source": "burger.jpg",
+      "sourceSize": "5040x3360",
       "crop": null,
       "native": false,
       "rendered": "900x600",
@@ -124,12 +124,12 @@
     },
     {
       "key": "res-zoom",
-      "job": "Full resolution — 1:1 detail, the evidence the numbers mean something",
-      "source": "food.jpg",
-      "sourceSize": "6000x4000",
+      "job": "Full resolution — 1:1 detail: sesame seeds, glaze and a clean bun edge",
+      "source": "burger.jpg",
+      "sourceSize": "5040x3360",
       "crop": {
-        "left": 2000,
-        "top": 2400,
+        "left": 3000,
+        "top": 440,
         "width": 1020,
         "height": 750
       },
