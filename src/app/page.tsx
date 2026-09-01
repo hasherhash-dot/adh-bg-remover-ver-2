@@ -222,8 +222,8 @@ function Hero() {
         <HeroScene
           beforeUrl={`${S}/hero-before.webp`}
           afterUrl={`${S}/hero-after.webp`}
-          width={801}
-          height={1200}
+          width={920}
+          height={720}
         >
           <div className="p-5 sm:p-6">
             <BackgroundRemoverStudio />
@@ -274,8 +274,8 @@ function Result() {
           {/* The product's own slider, at the largest size on the page. */}
           <Reveal>
             <BeforeAfterSlider
-              beforeUrl={`${S}/portrait-before.webp`}
-              afterUrl={`${S}/portrait-after.webp`}
+              beforeUrl={`${S}/proof-before.webp`}
+              afterUrl={`${S}/proof-after.webp`}
               alt="A portrait before and after its background was removed"
               maxViewportHeight={80}
             />
@@ -362,11 +362,11 @@ function StepVisual({ index }: { index: number }) {
     return (
       <div className="relative aspect-video overflow-hidden">
         <img
-          src={`${S}/hero-before.webp`}
+          src={`${S}/step-before.webp`}
           alt=""
           aria-hidden
           loading="lazy"
-          className="size-full object-cover object-top"
+          className="size-full object-cover object-center"
         />
         {/* The same scan cue the hero uses, at small scale. */}
         <span
@@ -381,11 +381,11 @@ function StepVisual({ index }: { index: number }) {
   return (
     <div className="checkerboard relative aspect-video">
       <img
-        src={`${S}/hero-after.webp`}
+        src={`${S}/step-after.webp`}
         alt=""
         aria-hidden
         loading="lazy"
-        className="size-full object-cover object-top"
+        className="size-full object-contain"
       />
       <span className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-md border border-line bg-paper-raised px-2.5 py-1.5 shadow-subtle">
         <Download className="size-3.5 text-navy" aria-hidden />
@@ -424,7 +424,7 @@ const SWAP_OPTIONS = [
   {
     id: 'photo',
     label: 'Photo',
-    image: `${S}/food-before.webp`,
+    image: `${S}/backdrop.webp`,
     note: 'Backdrop images are set in the editor, one step on from the colour picker.',
   },
 ];
@@ -449,10 +449,10 @@ function BackgroundSection() {
 
           <Reveal>
             <BackgroundSwap
-              cutoutUrl={`${S}/animal-after.webp`}
-              alt="A tiger cut out from its background, shown on the selected backdrop"
-              width={1000}
-              height={667}
+              cutoutUrl={`${S}/swap-after.webp`}
+              alt="A model cut out from her surroundings, shown on the selected backdrop"
+              width={600}
+              height={800}
               options={SWAP_OPTIONS}
             />
           </Reveal>
@@ -483,9 +483,9 @@ function EditorSection() {
 
         <Reveal className="mt-12">
           <EditorPreview
-            cutoutUrl={`${S}/animal-after.webp`}
+            cutoutUrl={`${S}/swap-after.webp`}
             alt="A cut-out in the editor's canvas"
-            filename="tiger.png"
+            filename="lookbook-04.png"
           />
         </Reveal>
       </div>
@@ -495,12 +495,20 @@ function EditorSection() {
 
 /* ----------------------------------------------------------------- batch -- */
 
+/**
+ * Five categories, deliberately unalike.
+ *
+ * This is the one section where unrelated subjects are the point: the feature
+ * being demonstrated is "many different images in one run", and five variations
+ * on the same subject would demonstrate the opposite. Everywhere else on the
+ * page the imagery is deliberately narrow.
+ */
 const BATCH_ITEMS = [
-  { filename: 'portrait-01.jpg', beforeUrl: `${S}/girl-before.webp`, afterUrl: `${S}/girl-after.webp` },
-  { filename: 'vehicle-02.jpg', beforeUrl: `${S}/product-before.webp`, afterUrl: `${S}/product-after.webp` },
-  { filename: 'lookbook-03.jpg', beforeUrl: `${S}/dress-before.webp`, afterUrl: `${S}/dress-after.webp` },
-  { filename: 'studio-04.jpg', beforeUrl: `${S}/stripes-before.webp`, afterUrl: `${S}/stripes-after.webp` },
-  { filename: 'menu-05.jpg', beforeUrl: `${S}/food-before.webp`, afterUrl: `${S}/food-after.webp` },
+  { filename: 'portrait-01.jpg', beforeUrl: `${S}/batch-portrait-before.webp`, afterUrl: `${S}/batch-portrait-after.webp` },
+  { filename: 'sideboard-02.jpg', beforeUrl: `${S}/batch-furniture-before.webp`, afterUrl: `${S}/batch-furniture-after.webp` },
+  { filename: 'lookbook-03.jpg', beforeUrl: `${S}/batch-fashion-before.webp`, afterUrl: `${S}/batch-fashion-after.webp` },
+  { filename: 'product-04.png', beforeUrl: `${S}/batch-object-before.webp`, afterUrl: `${S}/batch-object-after.webp` },
+  { filename: 'menu-05.jpg', beforeUrl: `${S}/batch-food-before.webp`, afterUrl: `${S}/batch-food-after.webp` },
 ];
 
 function BatchSection() {
@@ -530,36 +538,44 @@ function BatchSection() {
 
 /* ----------------------------------------------------------- edge quality -- */
 
+/**
+ * Three different hard boundaries, each a native-resolution crop.
+ *
+ * Unequal spans, and three different aspect ratios, because these are three
+ * photographs rather than three cards. Every crop is displayed at or below its
+ * native pixel size so nothing is upscaled — the section's whole purpose is
+ * that the masking can be inspected.
+ */
 const EDGE_CROPS = [
   {
     key: 'hair',
-    beforeUrl: `${S}/hair-before.webp`,
-    afterUrl: `${S}/hair-after.webp`,
+    beforeUrl: `${S}/edge-hair-before.webp`,
+    afterUrl: `${S}/edge-hair-after.webp`,
     title: 'Hair',
-    note: 'Individual strands, not a traced outline.',
-    width: 760,
-    height: 520,
+    note: 'Loose strands against a bright interior.',
+    width: 620,
+    height: 620,
+    span: 'lg:col-span-4',
+  },
+  {
+    key: 'fabric',
+    beforeUrl: `${S}/edge-fabric-before.webp`,
+    afterUrl: `${S}/edge-fabric-after.webp`,
+    title: 'Frayed fabric',
+    note: 'Loose scarf threads over an open sky.',
+    width: 660,
+    height: 420,
     span: 'lg:col-span-5',
   },
   {
     key: 'fur',
-    beforeUrl: `${S}/fur-before.webp`,
-    afterUrl: `${S}/fur-after.webp`,
+    beforeUrl: `${S}/edge-fur-before.webp`,
+    afterUrl: `${S}/edge-fur-after.webp`,
     title: 'Fur and whiskers',
-    note: 'Thin, light-coloured detail against a dark background.',
-    width: 430,
-    height: 320,
+    note: 'Pale, thin detail on dark foliage.',
+    width: 420,
+    height: 330,
     span: 'lg:col-span-3',
-  },
-  {
-    key: 'fringe',
-    beforeUrl: `${S}/fringe-before.webp`,
-    afterUrl: `${S}/fringe-after.webp`,
-    title: 'Frayed fabric',
-    note: 'Loose threads over a soft, low-contrast sky.',
-    width: 630,
-    height: 380,
-    span: 'lg:col-span-4',
   },
 ];
 
@@ -606,10 +622,10 @@ function ResolutionAndPrivacy() {
 
         <Reveal className="mt-12">
           <ResolutionProof
-            beforeUrl={`${S}/food-before.webp`}
-            afterUrl={`${S}/food-after.webp`}
-            zoomBeforeUrl={`${S}/zoom-before.webp`}
-            zoomAfterUrl={`${S}/zoom-after.webp`}
+            beforeUrl={`${S}/res-before.webp`}
+            afterUrl={`${S}/res-after.webp`}
+            zoomBeforeUrl={`${S}/res-zoom-before.webp`}
+            zoomAfterUrl={`${S}/res-zoom-after.webp`}
             zoomWidth={1020}
             zoomHeight={750}
             width={6000}
@@ -858,15 +874,15 @@ function FinalCta() {
 
       {/* A real cut-out bleeding in, so the last thing on the page is still
           the product rather than a poster. */}
-      <div
-        className="pointer-events-none absolute -right-8 bottom-0 hidden w-[24rem] lg:block"
-        aria-hidden
-      >
+      {/* Sized by the image rather than by a fixed box: the cut-out is 800x1270,
+          so a fixed width left it floating with gaps instead of running off the
+          edge. Width follows height, and it bleeds slightly past the right. */}
+      <div className="pointer-events-none absolute -right-4 bottom-0 hidden lg:block" aria-hidden>
         <img
-          src={`${S}/hero-after.webp`}
+          src={`${S}/cta-after.webp`}
           alt=""
           loading="lazy"
-          className="h-[24rem] w-full object-cover object-top opacity-90"
+          className="h-[26rem] w-auto"
         />
       </div>
 

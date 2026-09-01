@@ -61,7 +61,10 @@ export function BackgroundSwap({
       {/* The stage. Backdrop layers sit under the subject; only their opacity
           changes, so the subject never moves or re-renders. */}
       <div className="relative overflow-hidden rounded-xl border border-white/15 bg-white/[0.04] shadow-float">
-        <div className="checkerboard relative aspect-3/2">
+        {/* Portrait, because the subject is a standing figure. A landscape stage
+            left her floating in empty backdrop, which reads as a stock photo in
+            a box rather than a product placed on a background. */}
+        <div className="checkerboard relative aspect-4/5">
           {options.map((option) => {
             if (!option.color && !option.image) return null;
             return (

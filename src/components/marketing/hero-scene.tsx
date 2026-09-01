@@ -26,9 +26,19 @@ import { cn } from '@/lib/utils';
 export interface HeroSceneProps {
   beforeUrl: string;
   afterUrl: string;
-  /** Native size of the cut-out, shown on the output chip. Real, from the manifest. */
+  /** Intrinsic size of the asset, so the panel reserves the right box. */
   width: number;
   height: number;
+  /**
+   * What the output chip says.
+   *
+   * Deliberately not a pixel count. The hero shows an art-directed crop, so
+   * any dimensions printed here would describe the crop rather than what the
+   * tool returns for that photograph — true of the asset, misleading about the
+   * product. The resolution claim is made properly, with evidence, further
+   * down the page.
+   */
+  outputLabel?: string;
   /** The uploader. Passed in so this file never imports the studio. */
   children: React.ReactNode;
   className?: string;
@@ -39,6 +49,7 @@ export function HeroScene({
   afterUrl,
   width,
   height,
+  outputLabel = 'Transparent PNG',
   children,
   className,
 }: HeroSceneProps) {
@@ -46,7 +57,7 @@ export function HeroScene({
     <div className={cn('relative', className)}>
       {/* The panel. On mobile it is a plain block above the uploader; from lg
           it becomes the backdrop the uploader sits in front of. */}
-      <div className="relative lg:ml-[14%] lg:w-[86%]">
+      <div className="relative lg:ml-[16%] lg:w-[84%]">
         <div className="relative overflow-hidden rounded-xl border border-line bg-paper-raised shadow-float">
           {/* Panel chrome, so this reads as product surface rather than a
               stock photo with a border. */}
@@ -59,9 +70,7 @@ export function HeroScene({
             </span>
             <span className="flex items-center gap-1.5 rounded-full border border-line bg-paper-raised px-2.5 py-1">
               <Download className="size-3 text-navy" aria-hidden />
-              <span className="text-[10px] font-semibold tabular-nums text-ink">
-                {width} × {height} PNG
-              </span>
+              <span className="text-[10px] font-semibold text-ink">{outputLabel}</span>
             </span>
           </div>
 
@@ -75,7 +84,7 @@ export function HeroScene({
               width={width}
               height={height}
               fetchPriority="high"
-              className="block h-[22rem] w-full object-cover object-top sm:h-[26rem] lg:h-[32rem]"
+              className="block h-[22rem] w-full object-cover object-center sm:h-[26rem] lg:h-[34rem]"
             />
 
             <img
@@ -85,7 +94,7 @@ export function HeroScene({
               width={width}
               height={height}
               fetchPriority="high"
-              className="wipe-layer absolute inset-0 block h-full w-full object-cover object-top"
+              className="wipe-layer absolute inset-0 block h-full w-full object-cover object-center"
             />
 
             {/* The processing cue: a skewed accent seam that travels with the
@@ -109,7 +118,7 @@ export function HeroScene({
       </div>
 
       {/* The uploader: front layer, overlapping the panel from lg upwards. */}
-      <div className="relative z-10 mt-6 lg:absolute lg:-left-2 lg:bottom-8 lg:mt-0 lg:w-[62%] xl:w-[56%]">
+      <div className="relative z-10 mt-6 lg:absolute lg:-left-2 lg:bottom-8 lg:mt-0 lg:w-[52%] xl:w-[48%]">
         <div className="overflow-hidden rounded-xl border border-line bg-paper-raised shadow-float">
           {children}
         </div>

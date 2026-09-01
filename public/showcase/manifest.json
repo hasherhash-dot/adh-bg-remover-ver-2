@@ -1,59 +1,201 @@
 {
-  "generated": "2026-08-27T23:59:20.596Z",
+  "generated": "2026-09-01T19:20:11.366Z",
+  "provider": "adh-onnx",
   "assets": [
     {
       "key": "hero",
-      "sourceWidth": 801,
-      "sourceHeight": 1200,
-      "displayWidth": 1400
+      "job": "Hero — head, scarf and shoulders, wiping from original to cut-out",
+      "source": "portrait-1.jpg",
+      "sourceSize": "1200x1600",
+      "crop": {
+        "left": 200,
+        "top": 400,
+        "width": 820,
+        "height": 620
+      },
+      "native": true,
+      "rendered": "820x620",
+      "provider": "adh-onnx"
     },
     {
-      "key": "portrait",
-      "sourceWidth": 1200,
-      "sourceHeight": 1600,
-      "displayWidth": 1200
+      "key": "proof",
+      "job": "Before/after slider — full frame, the interactive proof",
+      "source": "portrait-1.jpg",
+      "sourceSize": "1200x1600",
+      "crop": null,
+      "native": false,
+      "rendered": "1200x1600",
+      "provider": "adh-onnx"
     },
     {
-      "key": "hair",
-      "sourceWidth": 1440,
-      "sourceHeight": 1800,
-      "displayWidth": 900
+      "key": "edge-fabric",
+      "job": "Edge detail — the scarf fringe itself, no face; distinct from the hero crop",
+      "source": "portrait-1.jpg",
+      "sourceSize": "1200x1600",
+      "crop": {
+        "left": 330,
+        "top": 780,
+        "width": 660,
+        "height": 420
+      },
+      "native": true,
+      "rendered": "660x420",
+      "provider": "adh-onnx"
     },
     {
-      "key": "stripes",
-      "sourceWidth": 550,
-      "sourceHeight": 759,
-      "displayWidth": 760
+      "key": "cta",
+      "job": "Final CTA — tall slice, bleeding in from the right edge",
+      "source": "portrait-1.jpg",
+      "sourceSize": "1200x1600",
+      "crop": {
+        "left": 200,
+        "top": 330,
+        "width": 800,
+        "height": 1270
+      },
+      "native": true,
+      "rendered": "800x1270",
+      "provider": "adh-onnx"
     },
     {
-      "key": "product",
-      "sourceWidth": 480,
-      "sourceHeight": 360,
-      "displayWidth": 640
+      "key": "swap",
+      "job": "Background replacement and editor — one subject, one workflow",
+      "source": "monochrome-dress.webp",
+      "sourceSize": "600x800",
+      "crop": null,
+      "native": false,
+      "rendered": "600x800",
+      "provider": "adh-onnx"
     },
     {
-      "key": "food",
-      "sourceWidth": 6000,
-      "sourceHeight": 4000,
-      "displayWidth": 640
+      "key": "step",
+      "job": "How it works — wide crop for the three small step frames",
+      "source": "monochrome-dress.webp",
+      "sourceSize": "600x800",
+      "crop": {
+        "left": 60,
+        "top": 60,
+        "width": 480,
+        "height": 270
+      },
+      "native": true,
+      "rendered": "480x270",
+      "provider": "adh-onnx"
     },
     {
-      "key": "animal",
-      "sourceWidth": 1000,
-      "sourceHeight": 667,
-      "displayWidth": 560
+      "key": "edge-hair",
+      "job": "Edge detail — the hair BOUNDARY and flyaway strands, not the face",
+      "source": "blonde-salon.webp",
+      "sourceSize": "1440x1800",
+      "crop": {
+        "left": 820,
+        "top": 180,
+        "width": 620,
+        "height": 620
+      },
+      "native": true,
+      "rendered": "620x620",
+      "provider": "adh-onnx"
     },
     {
-      "key": "girl",
-      "sourceWidth": 600,
-      "sourceHeight": 399,
-      "displayWidth": 400
+      "key": "edge-fur",
+      "job": "Edge detail — pale whiskers and ear fur on dark foliage",
+      "source": "animal.jpg",
+      "sourceSize": "1000x667",
+      "crop": {
+        "left": 190,
+        "top": 130,
+        "width": 420,
+        "height": 330
+      },
+      "native": true,
+      "rendered": "420x330",
+      "provider": "adh-onnx"
     },
     {
-      "key": "dress",
-      "sourceWidth": 600,
-      "sourceHeight": 800,
-      "displayWidth": 400
+      "key": "res",
+      "job": "Full resolution — the complete 24 MP frame, in and out",
+      "source": "food.jpg",
+      "sourceSize": "6000x4000",
+      "crop": null,
+      "native": false,
+      "rendered": "900x600",
+      "provider": "adh-onnx"
+    },
+    {
+      "key": "res-zoom",
+      "job": "Full resolution — 1:1 detail, the evidence the numbers mean something",
+      "source": "food.jpg",
+      "sourceSize": "6000x4000",
+      "crop": {
+        "left": 2000,
+        "top": 2400,
+        "width": 1020,
+        "height": 750
+      },
+      "native": true,
+      "rendered": "1020x750",
+      "provider": "adh-onnx"
+    },
+    {
+      "key": "backdrop",
+      "source": "furniture-vanity.png",
+      "backdrop": true
+    },
+    {
+      "key": "batch-portrait",
+      "job": "Batch — portrait",
+      "source": "afro-wall.webp",
+      "sourceSize": "801x1200",
+      "crop": null,
+      "native": false,
+      "rendered": "420x629",
+      "provider": "adh-onnx"
+    },
+    {
+      "key": "batch-furniture",
+      "job": "Batch — furniture",
+      "source": "furniture-sideboard.webp",
+      "sourceSize": "800x800",
+      "crop": null,
+      "native": false,
+      "rendered": "420x420",
+      "provider": "adh-onnx"
+    },
+    {
+      "key": "batch-fashion",
+      "job": "Batch — fashion",
+      "source": "stripes-on-stripes.webp",
+      "sourceSize": "550x759",
+      "crop": null,
+      "native": false,
+      "rendered": "420x580",
+      "provider": "adh-onnx"
+    },
+    {
+      "key": "batch-object",
+      "job": "Batch — object",
+      "source": "object-holes.png",
+      "sourceSize": "404x495",
+      "crop": null,
+      "native": false,
+      "rendered": "404x495",
+      "provider": "adh-onnx"
+    },
+    {
+      "key": "batch-food",
+      "job": "Batch — food. Square crop, so it never repeats the full-resolution frame",
+      "source": "food.jpg",
+      "sourceSize": "6000x4000",
+      "crop": {
+        "left": 2200,
+        "top": 1400,
+        "width": 1800,
+        "height": 1800
+      },
+      "native": false,
+      "rendered": "420x420",
+      "provider": "adh-onnx"
     }
   ]
 }
