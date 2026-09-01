@@ -224,7 +224,14 @@ describe('EdgeCrops', () => {
 describe('EditorPreview', () => {
   function mount() {
     return render(
-      <EditorPreview cutoutUrl="/cutout.webp" alt="A cut-out" filename="tiger.png" />,
+      <EditorPreview
+        cutoutUrl="/cutout.webp"
+        alt="A cut-out"
+        width={600}
+        height={800}
+        filename="lookbook.png"
+        backdropUrl="/backdrop.webp"
+      />,
     );
   }
 
@@ -232,7 +239,9 @@ describe('EditorPreview', () => {
     const { container } = mount();
     const canvas = () => container.querySelector('div.checkerboard') as HTMLElement;
 
-    expect(canvas().style.aspectRatio).toBe('3 / 2');
+    // "Original" must be the cut-out's own ratio. It used to be hardcoded to
+    // 3/2, which framed a portrait subject in a landscape box.
+    expect(canvas().style.aspectRatio).toBe(`${600 / 800} / 1`);
     act(() => screen.getByRole('radio', { name: '1:1' }).click());
     // jsdom normalises aspect-ratio to its two-value form.
     expect(canvas().style.aspectRatio).toBe('1 / 1');
@@ -252,15 +261,96 @@ describe('EditorPreview', () => {
     expect(canvas.style.padding).toBe('20%');
   });
 
-  it('keeps the decorative controls out of reach rather than dead on click', () => {
+  it('scales the subject from the scale slider', () => {
     const { container } = mount();
-    // Undo/redo, scale, rotate, background and download are shown but inert:
-    // a button that silently does nothing is worse than one you cannot press.
-    const inertRegions = container.querySelectorAll('[inert]');
-    expect(inertRegions.length).toBeGreaterThan(0);
+    const img = container.querySelector('img') as HTMLElement;
+    const slider = screen.getByLabelText('Subject scale');
 
-    // Only the two live controls are real buttons.
-    const roles = [...container.querySelectorAll('button')];
-    expect(roles.every((node) => node.closest('[inert]') === null)).toBe(true);
+    expect(img.style.transform).toContain('scale(1)');
+    act(() => void fireEvent.change(slider, { target: { value: '130' } }));
+    expect(img.style.transform).toContain('scale(1.3)');
+  });
+
+  it('shrinks a quarter-turn so it stays inside the frame instead of clipping', () => {
+    const { container } = mount();
+    const img = container.querySelector('img') as HTMLElement;
+
+    // 600x800 subject in its own 0.75 frame: turned sideways it needs 75% of
+    // the size to fit. Without this the long edge runs past the frame and the
+    // rotation reads as a rendering bug.
+    act(() => screen.getByRole('button', { name: 'Rotate right 90 degrees' }).click());
+    expect(img.style.transform).toBe('rotate(90deg) scale(0.75)');
+
+    // Square frame needs no compensation.
+    act(() => screen.getByRole('radio', { name: '1:1' }).click());
+    expect(img.style.transform).toBe('rotate(90deg) scale(1)');
+  });
+
+  it('rotates the subject in 90 degree steps, both ways', () => {
+    const { container } = mount();
+    const img = container.querySelector('img') as HTMLElement;
+
+    act(() => screen.getByRole('button', { name: 'Rotate right 90 degrees' }).click());
+    expect(img.style.transform).toContain('rotate(90deg)');
+    act(() => screen.getByRole('button', { name: 'Rotate left 90 degrees' }).click());
+    expect(img.style.transform).toContain('rotate(0deg)');
+  });
+
+  it('puts a colour and then a photograph behind the subject', () => {
+    const { container } = mount();
+    const canvas = () => container.querySelector('div.rounded-lg.border') as HTMLElement;
+
+    expect(canvas().className).toContain('checkerboard');
+
+    act(() => screen.getByRole('radio', { name: 'Background colour #2f6fed' }).click());
+    expect(canvas().className).not.toContain('checkerboard');
+    expect(canvas().style.backgroundColor).toBe('rgb(47, 111, 237)');
+
+    act(() => screen.getByRole('radio', { name: 'Photo background' }).click());
+    expect(canvas().style.backgroundImage).toContain('/backdrop.webp');
+  });
+
+  it('undoes and redoes across every control, not just one', () => {
+    const { container } = mount();
+    const canvas = () => container.querySelector('div.rounded-lg.border') as HTMLElement;
+    const undo = () => screen.getByRole('button', { name: 'Undo' });
+    const redo = () => screen.getByRole('button', { name: 'Redo' });
+
+    expect(undo()).toBeDisabled();
+
+    act(() => screen.getByRole('radio', { name: '1:1' }).click());
+    act(() => screen.getByRole('radio', { name: 'Background colour #0e0e10' }).click());
+    expect(canvas().style.backgroundColor).toBe('rgb(14, 14, 16)');
+
+    act(() => undo().click());
+    expect(canvas().style.backgroundColor).toBe('');
+    expect(canvas().style.aspectRatio).toBe('1 / 1');
+
+    act(() => undo().click());
+    expect(canvas().style.aspectRatio).toBe(`${600 / 800} / 1`);
+
+    act(() => redo().click());
+    expect(canvas().style.aspectRatio).toBe('1 / 1');
+  });
+
+  it('collapses one slider drag into a single undo step', () => {
+    const { container } = mount();
+    const canvas = () => container.querySelector('div.rounded-lg.border') as HTMLElement;
+    const slider = screen.getByLabelText('Padding around the subject');
+
+    // A drag fires many change events; one undo must step back over all of them.
+    act(() => void fireEvent.change(slider, { target: { value: '12' } }));
+    act(() => void fireEvent.change(slider, { target: { value: '16' } }));
+    act(() => void fireEvent.change(slider, { target: { value: '20' } }));
+    expect(canvas().style.padding).toBe('20%');
+
+    act(() => screen.getByRole('button', { name: 'Undo' }).click());
+    expect(canvas().style.padding).toBe('8%');
+  });
+
+  it('sends Download to the real tool rather than faking a file', () => {
+    mount();
+    const link = screen.getByRole('link', { name: /Download PNG/ });
+    expect(link).toHaveAttribute('href', '/remove-background');
   });
 });

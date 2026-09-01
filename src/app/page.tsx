@@ -476,8 +476,8 @@ function EditorSection() {
             </Heading>
           </div>
           <Lede className="max-w-sm">
-            Crop, scale, rotate, pad and recolour without opening another app. Change the ratio or
-            the padding here to see it move.
+            Crop, scale, rotate, pad and recolour without opening another app. Every control here
+            is live — try it.
           </Lede>
         </div>
 
@@ -485,7 +485,10 @@ function EditorSection() {
           <EditorPreview
             cutoutUrl={`${S}/swap-after.webp`}
             alt="A cut-out in the editor's canvas"
+            width={600}
+            height={800}
             filename="lookbook-04.png"
+            backdropUrl={`${S}/backdrop.webp`}
           />
         </Reveal>
       </div>
