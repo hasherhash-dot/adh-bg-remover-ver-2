@@ -7,11 +7,15 @@ product in three parts that share one engine:
 - **HTTP API** — `POST /api/remove-background`, multipart in, PNG out
 - **Browser extension** — Manifest V3, right-click any image on the web
 
-Segmentation runs **locally** by default via
-[`@imgly/background-removal-node`](https://github.com/imgly/background-removal-js)
-(ISNet under ONNX Runtime). The model weights ship inside the npm package, so
-there is no API key, no per-image cost and no outbound network call at
-inference time.
+Segmentation runs **locally** — no API key, no per-image cost, no outbound
+network call at inference time. Two engines are available:
+
+- **`adh-onnx`** (default) — our own BiRefNet-lite pipeline on ONNX Runtime.
+  Better edges, and it needs a model file that is **not in this repository**.
+  See [Getting the engine running](#getting-the-engine-running) below.
+- **`local`** — [`@imgly/background-removal-node`](https://github.com/imgly/background-removal-js)
+  (ISNet). Weights ship inside the npm package, so it works straight after
+  `npm install` with nothing else to fetch. Kept as the standby.
 
 ---
 
@@ -23,12 +27,52 @@ cp .env.example .env.local
 npm run dev
 ```
 
-Open <http://localhost:3000> and drop in a photo. The first request loads the
-model into memory (a second or two); after that a typical image takes 2–4
-seconds on CPU.
+Open <http://localhost:3000>. The page will load — but **uploading an image
+will fail on a fresh clone** until you deal with the model. That is expected;
+see the next section.
 
 > **Note on install size.** `@imgly/background-removal-node` is ~130MB unpacked
 > because it bundles the ONNX weights. That is a one-time download.
+
+---
+
+## Getting the engine running
+
+The default provider is `adh-onnx`, which loads
+`models/birefnet-lite-640.onnx` plus its `.onnx.data` sidecar — **173MB of
+weights that are deliberately not committed.** Without them the API returns:
+
+```
+PROVIDER_MISCONFIGURED: ADH model not found at <repo>/models/birefnet-lite-640.onnx
+```
+
+**Option A — start now, no model file.** Switch to the bundled ISNet engine.
+Its weights come from npm, so there is nothing to download:
+
+```bash
+echo "BACKGROUND_REMOVAL_PROVIDER=local" >> .env.local
+```
+
+Everything works — upload, batch, editor, API, extension. Edge quality on hair
+and fur is lower than the ADH engine, and that is the only difference.
+
+**Option B — run the real ADH engine.** You need two files in `models/`:
+
+```
+models/birefnet-lite-640.onnx        4.6 MB   the graph
+models/birefnet-lite-640.onnx.data 173.0 MB   the weights
+```
+
+Both are required and must sit side by side — ONNX Runtime resolves the sidecar
+by name relative to the `.onnx`. Ask the maintainer for a copy, or build them
+yourself from the upstream weights: [`models/README.md`](models/README.md) has
+the full export procedure, which needs Python and takes a while.
+
+Check which engine you ended up on:
+
+```bash
+curl http://localhost:3000/api/health
+```
 
 ---
 
@@ -87,7 +131,8 @@ Browser / Extension / curl
           ├── image/pipeline     decode → downscale → composite → encode  (sharp)
           │
           └── BackgroundRemovalProvider   ← swappable
-                ├── local-onnx   ISNet via ONNX Runtime      (default)
+                ├── adh-onnx     BiRefNet-lite via ONNX RT   (default)
+                ├── local        ISNet, weights from npm      (standby)
                 ├── http         any service returning a PNG
                 ├── replicate    hosted model
                 └── mock         deterministic, no AI        (tests)
