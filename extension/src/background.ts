@@ -37,6 +37,15 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
 });
 
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
+  if (message?.type === 'adh:start-upload') {
+    // Own the entire handoff before activating a tab closes the popup.
+    void startUpload(message.jobId as string).then(
+      () => sendResponse({ ok: true }),
+      (error: unknown) => sendResponse({ ok: false, error: String(error) }),
+    );
+    return true;
+  }
+
   if (message?.type === 'adh:process-job') {
     void processStoredJob(message.jobId as string).then(
       () => sendResponse({ ok: true }),
@@ -55,6 +64,11 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
 
   return false;
 });
+
+async function startUpload(jobId: string): Promise<void> {
+  await chrome.tabs.create({ url: chrome.runtime.getURL(`result.html#${jobId}`) });
+  await processStoredJob(jobId);
+}
 
 async function handleContextMenu(srcUrl: string, pageUrl?: string): Promise<void> {
   const jobId = createJobId();

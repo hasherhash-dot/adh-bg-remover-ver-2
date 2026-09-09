@@ -44,6 +44,7 @@ const buildOptions = {
 
 async function copyStatic() {
   await mkdir(outDir, { recursive: true });
+  await cp(join(srcDir, 'assets'), join(outDir, 'assets'), { recursive: true });
   for (const file of STATIC_FILES) {
     await cp(join(srcDir, file), join(outDir, file));
   }
@@ -81,6 +82,9 @@ async function verify() {
     'popup.js',
     'options.js',
     'ui.css',
+    'assets/adh-logo.svg',
+    'assets/inter-latin.woff2',
+    'assets/bricolage-latin.woff2',
   ].filter(Boolean);
 
   const { access } = await import('node:fs/promises');

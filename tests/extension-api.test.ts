@@ -97,7 +97,7 @@ describe('extension API client', () => {
     const result = await removeBackground(png, 'photo.jpg');
 
     expect(fetchMock).toHaveBeenCalledOnce();
-    expect(fetchMock.mock.calls[0]?.[0]).toBe('http://localhost:3000/api/remove-background');
+    expect(fetchMock.mock.calls[0]?.[0]).toBe('http://localhost:3200/api/remove-background');
     expect(result.width).toBe(800);
     expect(result.height).toBe(600);
     expect(result.processingTimeMs).toBe(2400);
@@ -169,7 +169,7 @@ describe('extension API client', () => {
     );
 
     await expect(removeBackground(new Blob([new Uint8Array([1])]), 'a.png')).rejects.toThrow(
-      /Could not reach http:\/\/localhost:3000/,
+      /Could not reach http:\/\/localhost:3200/,
     );
   });
 

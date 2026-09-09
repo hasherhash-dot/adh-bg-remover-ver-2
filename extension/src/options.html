@@ -1,70 +1,10 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>ADH Background Remover — Settings</title>
-    <link rel="stylesheet" href="ui.css" />
-  </head>
-  <body>
-    <div class="page" style="max-width: 560px">
-      <div class="header">
-        <img src="icons/icon-32.png" width="24" height="24" alt="" />
-        <h1>Settings</h1>
-      </div>
-
-      <div class="field">
-        <label for="api-base-url">Server address</label>
-        <input id="api-base-url" type="url" placeholder="http://localhost:3000" spellcheck="false" />
-        <p class="hint">
-          The ADH deployment this extension talks to. Use your own server, or
-          http://localhost:3000 while running the app locally.
-        </p>
-      </div>
-
-      <div class="field">
-        <label for="api-key">API key (optional)</label>
-        <input id="api-key" type="password" placeholder="adh_live_…" spellcheck="false" autocomplete="off" />
-        <p class="hint">
-          Only needed if your deployment requires key authentication. The key is stored in this
-          browser's extension storage and is sent only to the server address above. The extension
-          ships no keys of its own.
-        </p>
-      </div>
-
-      <div class="section">
-        <p class="section-title">Behaviour</p>
-        <label class="checkbox">
-          <input id="auto-download" type="checkbox" />
-          <span>
-            Download automatically<br />
-            <span class="subtle">Save the transparent PNG as soon as it is ready.</span>
-          </span>
-        </label>
-        <label class="checkbox">
-          <input id="open-result-tab" type="checkbox" />
-          <span>
-            Open a result tab<br />
-            <span class="subtle">Show the before/after view after a right-click action.</span>
-          </span>
-        </label>
-      </div>
-
-      <div class="row" style="margin-top: 18px">
-        <button id="save" class="btn btn-accent">Save settings</button>
-        <button id="test" class="btn">Test connection</button>
-        <span id="save-status" class="subtle"></span>
-      </div>
-
-      <div class="section">
-        <p class="section-title">Permissions</p>
-        <p class="hint" style="margin: 0">
-          This extension requests access to all sites so it can download an image you right-click,
-          whichever site it is on. It reads nothing else, injects no scripts into pages, and sends
-          images only to the server address configured above.
-        </p>
-      </div>
-    </div>
-    <script type="module" src="options.js"></script>
-  </body>
-</html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>ADH Background Remover — Settings</title><link rel="stylesheet" href="ui.css"/></head>
+<body><main class="page settings-page"><header class="header"><img class="brand-logo" src="assets/adh-logo.svg" alt="American Design Hub" draggable="false"/><span class="surface-label spacer">EXTENSION / SETTINGS</span></header>
+ <div class="page-intro"><p class="eyebrow">MAKE IT WORK YOUR WAY</p><h1>Your studio.<br/><em>Your setup.</em></h1><p class="muted">Connect to ADH and choose what happens after each cut-out.</p></div>
+ <div class="settings-grid"><section class="settings-card"><p class="eyebrow">01 / CONNECTION</p><h2>Connect your server</h2>
+ <div class="field"><label for="api-base-url">Server address</label><input id="api-base-url" type="url" placeholder="http://localhost:3200" spellcheck="false" aria-describedby="server-hint"/><p id="server-hint" class="hint">The ADH deployment that processes your images. For this local version, use http://localhost:3200.</p></div>
+ <div class="field"><label for="api-key">API key <span class="subtle">Optional</span></label><input id="api-key" type="password" placeholder="adh_live_…" spellcheck="false" autocomplete="off" aria-describedby="key-hint"/><p id="key-hint" class="hint">Only needed when your server requires it. Saved in this browser’s extension storage and sent only to the server above.</p></div>
+ </section><section class="settings-card"><p class="eyebrow">02 / YOUR WORKFLOW</p><h2>After background removal</h2><label class="checkbox"><input id="auto-download" type="checkbox"/><span>Download automatically<span class="subtle">Save the PNG as soon as it is ready.</span></span></label><label class="checkbox"><input id="open-result-tab" type="checkbox"/><span>Open a result tab<span class="subtle">See the before and after following a right-click action.</span></span></label><div class="permission-note"><h3>About permissions</h3><p class="hint">Site access lets the extension fetch an image you select with a right-click. It does not inject scripts into pages. Selected images are sent to your configured server.</p></div></section></div>
+ <div class="settings-save"><div class="actions"><button id="save" class="btn btn-accent btn-lg">Save settings</button><button id="test" class="btn btn-lg">Test connection</button></div><span id="save-status" class="muted" role="status" aria-live="polite"></span></div>
+</main><script type="module" src="options.js"></script></body></html>

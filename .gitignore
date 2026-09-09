@@ -30,3 +30,6 @@ design-handoff/
 # Python build caches
 __pycache__/
 *.pyc
+
+# Local extension visual QA fixtures
+public/__extension-preview/

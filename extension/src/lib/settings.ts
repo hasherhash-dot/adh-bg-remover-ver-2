@@ -22,7 +22,7 @@ export interface Settings {
 }
 
 export const DEFAULT_SETTINGS: Settings = {
-  apiBaseUrl: 'http://localhost:3000',
+  apiBaseUrl: 'http://localhost:3200',
   apiKey: '',
   autoDownload: false,
   openResultTab: true,

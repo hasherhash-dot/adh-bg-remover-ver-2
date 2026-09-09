@@ -1,59 +1,9 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Background removed — ADH</title>
-    <link rel="stylesheet" href="ui.css" />
-  </head>
-  <body>
-    <div class="page">
-      <div class="header">
-        <img src="icons/icon-32.png" width="24" height="24" alt="" />
-        <h1>Background Remover</h1>
-      </div>
-
-      <div id="status" class="status">
-        <span class="spinner" id="status-spinner"></span>
-        <span id="status-text">Fetching the image…</span>
-      </div>
-
-      <div id="result" class="hidden">
-        <div class="compare">
-          <figure class="pane" style="margin: 0">
-            <figcaption>Original</figcaption>
-            <div class="frame"><img id="img-before" alt="The original image" /></div>
-          </figure>
-          <figure class="pane" style="margin: 0">
-            <figcaption>Background removed</figcaption>
-            <div class="frame checker"><img id="img-after" alt="The image with its background removed" /></div>
-          </figure>
-        </div>
-
-        <dl class="meta">
-          <div><dt>Dimensions</dt><dd id="meta-dimensions">—</dd></div>
-          <div><dt>File size</dt><dd id="meta-size">—</dd></div>
-          <div><dt>Processing time</dt><dd id="meta-time">—</dd></div>
-          <div><dt>Format</dt><dd>PNG</dd></div>
-        </dl>
-
-        <div class="actions">
-          <button id="download" class="btn btn-accent btn-lg">Download PNG</button>
-          <button id="copy" class="btn btn-lg">Copy image</button>
-          <button id="open-web-app" class="btn btn-lg">Open in web app</button>
-        </div>
-      </div>
-
-      <div id="error" class="hidden">
-        <div class="status error">
-          <span id="error-text">Something went wrong.</span>
-        </div>
-        <div class="actions" style="margin-top: 12px">
-          <button id="retry" class="btn">Try again</button>
-          <button id="open-options-error" class="btn btn-ghost">Open settings</button>
-        </div>
-      </div>
-    </div>
-    <script type="module" src="result.js"></script>
-  </body>
-</html>
+<html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/><title>Background removed — ADH</title><link rel="stylesheet" href="ui.css"/></head>
+<body><main class="page result-page"><header class="header"><img class="brand-logo" src="assets/adh-logo.svg" alt="American Design Hub" draggable="false"/><span class="surface-label spacer">EXTENSION / YOUR IMAGE</span></header>
+ <div class="page-intro"><p class="eyebrow">A LITTLE LESS BACKGROUND</p><h1>Your image.<br/><em>A new beginning.</em></h1><p class="muted">Compare the original, check the details, and take your cut-out with you.</p></div>
+ <div id="status" class="status processing-panel" role="status" aria-live="polite"><span class="spinner" id="status-spinner"></span><span id="status-text">Fetching the image…</span></div>
+ <div id="result" class="hidden"><div class="compare"><figure class="pane"><figcaption><span>01 / Original</span><span>BEFORE</span></figcaption><div class="frame"><img id="img-before" alt="The original image" draggable="false"/></div></figure><figure class="pane result-pane"><figcaption><span>02 / Background removed</span><span>AFTER</span></figcaption><div class="frame checker"><img id="img-after" alt="The image with its background removed" draggable="false"/></div></figure></div>
+ <div class="result-bottom"><dl class="meta"><div><dt>Dimensions</dt><dd id="meta-dimensions">—</dd></div><div><dt>File size</dt><dd id="meta-size">—</dd></div><div><dt>Processing time</dt><dd id="meta-time">—</dd></div><div><dt>Format</dt><dd>PNG</dd></div></dl><div class="actions"><button id="download" class="btn btn-accent btn-lg">Download PNG ↓</button><button id="copy" class="btn btn-lg">Copy image</button><button id="open-web-app" class="btn btn-lg">Open web studio ↗</button></div></div></div>
+ <div id="error" class="hidden error-panel"><p class="eyebrow">LET’S TRY THAT AGAIN</p><h2>Something needs attention.</h2><div class="status error" role="alert"><span id="error-text">Something went wrong.</span></div><div class="actions"><button id="retry" class="btn btn-accent">Try again</button><button id="open-options-error" class="btn">Open settings</button></div></div>
+</main><script type="module" src="result.js"></script></body></html>

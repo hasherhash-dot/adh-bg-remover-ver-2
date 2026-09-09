@@ -94,8 +94,10 @@ async function handleFiles(files: File[]): Promise<void> {
 
   try {
     await putJob(job);
-    await chrome.tabs.create({ url: chrome.runtime.getURL(`result.html#${jobId}`) });
-    await chrome.runtime.sendMessage({ type: 'adh:process-job', jobId });
+    // The worker opens the tab: opening it here destroys this popup before
+    // the following processing message can reliably be sent.
+    const response = await chrome.runtime.sendMessage({ type: 'adh:start-upload', jobId });
+    if (!response?.ok) throw new Error(response?.error ?? 'Could not start processing.');
     window.close();
   } catch {
     showStatus('Could not start processing. Try again.', true);
