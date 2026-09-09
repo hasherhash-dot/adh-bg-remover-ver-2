@@ -27,3 +27,6 @@ debug/
 models/*.onnx
 models/*.onnx.data
 design-handoff/
+# Python build caches
+__pycache__/
+*.pyc

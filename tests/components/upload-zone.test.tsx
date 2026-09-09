@@ -2,7 +2,7 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { UploadZone } from '@/components/upload/upload-zone';
+import { GlobalDropOverlay, UploadZone } from '@/components/upload/upload-zone';
 
 /**
  * The upload zone is the first thing every user touches, so its four input
@@ -17,6 +17,42 @@ function imageFile(name = 'photo.png', type = 'image/png'): File {
 }
 
 describe('UploadZone', () => {
+  it('ignores showcase image drags over both upload targets, then accepts an external file', () => {
+    const local = vi.fn();
+    const global = vi.fn();
+    render(<><img src="/showcase/example.webp" alt="Showcase" /><UploadZone onFiles={local} /><GlobalDropOverlay onFiles={global} /></>);
+    const image = screen.getByAltText('Showcase');
+    const dataTransfer = { types: ['Files', 'text/uri-list'], files: [imageFile()] };
+    fireEvent.dragStart(image, { dataTransfer });
+    fireEvent.dragEnter(screen.getByRole('button'), { dataTransfer });
+    expect(screen.queryByText('Drop to add images')).not.toBeInTheDocument();
+    expect(screen.queryByText('Drop to remove the background')).not.toBeInTheDocument();
+    fireEvent.drop(screen.getByRole('button'), { dataTransfer });
+    fireEvent.drop(document.body, { dataTransfer });
+    expect(local).not.toHaveBeenCalled();
+    expect(global).not.toHaveBeenCalled();
+    fireEvent.dragEnd(image);
+    const file = imageFile('external.png');
+    fireEvent.dragEnter(document.body, { dataTransfer: { types: ['Files'], files: [] } });
+    expect(screen.getByText('Drop to add images')).toBeInTheDocument();
+    fireEvent.drop(document.body, { dataTransfer: { types: ['Files'], files: [file] } });
+    expect(global).toHaveBeenCalledExactlyOnceWith([file]);
+    expect(screen.queryByText('Drop to add images')).not.toBeInTheDocument();
+  });
+
+  it('submits a file dropped on the upload box only once with the global target mounted', () => {
+    const local = vi.fn();
+    const global = vi.fn();
+    render(<><UploadZone onFiles={local} /><GlobalDropOverlay onFiles={global} /></>);
+    const file = imageFile();
+    fireEvent.dragEnter(screen.getByRole('button'), { dataTransfer: { types: ['Files'], files: [] } });
+    expect(screen.getByText('Drop to add images')).toBeInTheDocument();
+    fireEvent.drop(screen.getByRole('button'), { dataTransfer: { types: ['Files'], files: [file] } });
+    expect(local).toHaveBeenCalledExactlyOnceWith([file], 'drop');
+    expect(global).not.toHaveBeenCalled();
+    expect(screen.queryByText('Drop to add images')).not.toBeInTheDocument();
+  });
+
   it('exposes the drop area as a labelled button with format guidance', () => {
     render(<UploadZone onFiles={vi.fn()} />);
 

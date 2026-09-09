@@ -1,3 +1,4 @@
+import { InnerCta } from '@/components/marketing/inner-cta';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Globe, KeyRound, Terminal } from 'lucide-react';
@@ -35,7 +36,7 @@ const ENDPOINTS = [
 export default function ApiDocsPage() {
   return (
     <SiteShell>
-      <div className="mx-auto max-w-4xl px-5 py-14 sm:px-8 sm:py-20">
+      <div className="inner-page inner-docs">
         <header>
           <Badge variant="outline" className="mb-5">
             <Terminal className="size-3" aria-hidden />
@@ -228,6 +229,7 @@ X-RateLimit-Remaining: 19`}
             <Code>X-RateLimit-Reset</Code>; a 429 also carries <Code>Retry-After</Code>.
           </p>
         </section>
+        <InnerCta/>
       </div>
     </SiteShell>
   );

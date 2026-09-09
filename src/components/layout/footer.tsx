@@ -26,11 +26,13 @@ const SECTIONS = [
     ],
   },
   {
-    title: 'Developers',
+    title: 'Resources & legal',
     links: [
       { href: '/api', label: 'API reference' },
       { href: '/api#extension', label: 'Browser extension' },
       { href: '/resources', label: 'Resources' },
+      { href: '/privacy-policy', label: 'Privacy Policy' },
+      { href: '/terms', label: 'Terms and Conditions' },
     ],
   },
 ] as const;
@@ -47,10 +49,7 @@ export function Footer() {
               className="-my-2 inline-flex min-h-11 items-center gap-2.5 rounded-xs"
               aria-label={`${BRAND.name} — home`}
             >
-              <Logo className="size-7" />
-              <span className="text-[15px] font-semibold tracking-tight text-ink">
-                ADH <span className="font-normal text-ink-muted">Background Remover</span>
-              </span>
+              <Logo className="w-[210px]" />
             </Link>
             <p className="mt-3.5 max-w-64 text-sm leading-relaxed text-ink-muted">
               Transparent PNGs at the resolution you uploaded. Free, no account.
@@ -93,8 +92,7 @@ export function Footer() {
               , {ORGANISATION.address.locality}, {ORGANISATION.address.region}.
             </p>
             <p className="mt-1">
-              © {new Date().getFullYear()} {ORGANISATION.name}. Images are processed in memory and
-              discarded — never stored.
+              © {new Date().getFullYear()} {ORGANISATION.name}. Image processing, local history and data handling: see our Privacy Policy.
             </p>
           </div>
 

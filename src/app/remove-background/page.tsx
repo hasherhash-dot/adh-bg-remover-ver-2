@@ -1,3 +1,4 @@
+import { InnerCta } from '@/components/marketing/inner-cta';
 import type { Metadata } from 'next';
 import { SiteShell } from '@/components/layout/site-shell';
 import { BackgroundRemoverStudio } from '@/components/studio/background-remover-studio';
@@ -12,7 +13,7 @@ export const metadata: Metadata = {
 export default function RemoveBackgroundPage() {
   return (
     <SiteShell>
-      <div className="mx-auto max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
+      <div className="inner-page inner-remover">
         <header className="mx-auto max-w-2xl text-center">
           <h1 className="font-display text-3xl font-bold tracking-[-0.025em] text-ink sm:text-4xl">
             Background Remover
@@ -23,9 +24,10 @@ export default function RemoveBackgroundPage() {
           </p>
         </header>
 
-        <div className="mt-10">
+        <div className="inner-studio mt-10" id="upload">
           <BackgroundRemoverStudio />
         </div>
+        <InnerCta/>
       </div>
     </SiteShell>
   );

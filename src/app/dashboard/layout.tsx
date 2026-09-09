@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <SiteShell>
-      <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8 sm:py-14">
+      <div className="inner-page inner-dashboard">
         <div className="grid gap-8 lg:grid-cols-[200px_minmax(0,1fr)] lg:gap-12">
           <DashboardNav />
           <div className="min-w-0">{children}</div>

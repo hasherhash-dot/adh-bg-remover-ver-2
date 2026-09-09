@@ -133,7 +133,7 @@ export function EdgeCrops({ crops, className }: { crops: EdgeCrop[]; className?:
       </div>
 
       <p className="mt-6 max-w-2xl text-[14px] leading-relaxed text-ink-subtle">
-        Every crop above is shown at the size the engine produced it — no resizing, no sharpening.
+        These crops were extracted from real ADH outputs without sharpening, and scaled here to fit your screen.
         &ldquo;On colour&rdquo; is the honest test: partial transparency blends into the
         background, while a hard cut-out leaves a fringe.
       </p>

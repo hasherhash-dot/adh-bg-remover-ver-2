@@ -6,6 +6,22 @@ import { cn } from '@/lib/utils';
 import { ACCEPT_ATTRIBUTE, UPLOAD_LIMITS } from '@/lib/config/public';
 import { Button } from '@/components/ui/button';
 
+/** Native image drags can contain Files too; only external drags are uploads. */
+function useInternalDrag() {
+  const internal = useRef(false);
+  useEffect(() => {
+    const start = () => { internal.current = true; };
+    const end = () => { internal.current = false; };
+    window.addEventListener('dragstart', start, true);
+    window.addEventListener('dragend', end, true);
+    return () => {
+      window.removeEventListener('dragstart', start, true);
+      window.removeEventListener('dragend', end, true);
+    };
+  }, []);
+  return internal;
+}
+
 /**
  * The primary way images enter the product. Supports four input paths — drop,
  * click-to-browse, keyboard activation and clipboard paste — because on
@@ -36,6 +52,7 @@ export function UploadZone({
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const dragDepth = useRef(0);
+  const internalDrag = useInternalDrag();
   const inputId = useId();
   const descriptionId = `${inputId}-description`;
 
@@ -77,7 +94,7 @@ export function UploadZone({
   // crosses inner nodes.
   const onDragEnter = (event: React.DragEvent) => {
     event.preventDefault();
-    if (disabled) return;
+    if (disabled || internalDrag.current) return;
     dragDepth.current += 1;
     if (event.dataTransfer.types.includes('Files')) setIsDragging(true);
   };
@@ -95,7 +112,7 @@ export function UploadZone({
     event.preventDefault();
     dragDepth.current = 0;
     setIsDragging(false);
-    if (disabled) return;
+    if (disabled || internalDrag.current) return;
     emit(event.dataTransfer.files, 'drop');
   };
 
@@ -210,12 +227,13 @@ export function GlobalDropOverlay({
 }) {
   const [visible, setVisible] = useState(false);
   const depth = useRef(0);
+  const internalDrag = useInternalDrag();
 
   useEffect(() => {
     if (!enabled) return;
 
     const onEnter = (event: DragEvent) => {
-      if (!event.dataTransfer?.types.includes('Files')) return;
+      if (internalDrag.current || !event.dataTransfer?.types.includes('Files')) return;
       depth.current += 1;
       setVisible(true);
     };
@@ -228,9 +246,11 @@ export function GlobalDropOverlay({
     };
     const onOver = (event: DragEvent) => event.preventDefault();
     const onDrop = (event: DragEvent) => {
+      const handledByDropZone = event.defaultPrevented;
       event.preventDefault();
       depth.current = 0;
       setVisible(false);
+      if (internalDrag.current || handledByDropZone) return;
       const files = Array.from(event.dataTransfer?.files ?? []);
       if (files.length > 0) onFiles(files);
     };
@@ -245,7 +265,7 @@ export function GlobalDropOverlay({
       window.removeEventListener('dragover', onOver);
       window.removeEventListener('drop', onDrop);
     };
-  }, [enabled, onFiles]);
+  }, [enabled, onFiles, internalDrag]);
 
   if (!visible) return null;
 

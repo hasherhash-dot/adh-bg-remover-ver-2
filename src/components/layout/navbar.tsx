@@ -68,7 +68,7 @@ export function Navbar() {
       )}
     >
       <nav
-        className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-6 px-5 sm:px-8"
+        className="mx-auto flex h-20 max-w-[1400px] items-center justify-between gap-6 px-5 sm:px-8"
         aria-label="Main"
       >
         <Link
@@ -76,15 +76,7 @@ export function Navbar() {
           className="-my-2 flex min-h-11 shrink-0 items-center gap-2.5 rounded-xs"
           aria-label="ADH Background Remover — home"
         >
-          <Logo className="size-8" />
-          {/* The full product name needs room. On a phone the wordmark plus a
-              CTA plus a menu button does not fit, so the descriptor is dropped
-              below sm — the page title carries it there instead. */}
-          <span aria-hidden className="hidden h-6 w-px bg-line sm:block" />
-          <span className="text-[16px] font-semibold tracking-tight text-ink">
-            ADH{' '}
-            <span className="hidden font-normal text-ink-muted sm:inline">Background Remover</span>
-          </span>
+          <Logo className="w-[130px] sm:w-[190px]" />
         </Link>
 
         <ul className="hidden items-center gap-0.5 md:flex">
@@ -124,7 +116,7 @@ export function Navbar() {
         <div className="flex items-center gap-1.5 md:hidden">
           {!isStudio && (
             <Button variant="accent" size="sm" asChild>
-              <Link href="/remove-background">Remove background</Link>
+              <Link href="/remove-background">Upload image</Link>
             </Button>
           )}
           <button
@@ -143,7 +135,7 @@ export function Navbar() {
       {open && (
         <div
           id="mobile-menu"
-          className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto border-t border-line bg-paper px-5 py-5 md:hidden animate-fade-in"
+          className="fixed inset-x-0 bottom-0 top-20 z-40 overflow-y-auto border-t border-line bg-paper px-5 py-5 md:hidden animate-fade-in"
         >
           <ul className="flex flex-col">
             {NAV_LINKS.map((link) => (

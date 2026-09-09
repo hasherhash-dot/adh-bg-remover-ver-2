@@ -1,3 +1,4 @@
+import { InnerCta } from '@/components/marketing/inner-cta';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowRight, Check } from 'lucide-react';
@@ -30,7 +31,7 @@ export default function PricingPage() {
 
   return (
     <SiteShell>
-      <div className="mx-auto max-w-4xl px-5 py-14 sm:px-8 sm:py-20">
+      <div className="inner-page inner-pricing">
         <header className="max-w-2xl">
           <Badge variant="accent" className="mb-5">
             Free while in development
@@ -129,6 +130,7 @@ export default function PricingPage() {
             ))}
           </dl>
         </section>
+        <InnerCta/>
       </div>
     </SiteShell>
   );

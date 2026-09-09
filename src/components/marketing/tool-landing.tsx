@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { InnerCta } from '@/components/marketing/inner-cta';
 import { ArrowRight } from 'lucide-react';
 import { SiteShell } from '@/components/layout/site-shell';
 import { BackgroundRemoverStudio } from '@/components/studio/background-remover-studio';
@@ -22,6 +23,7 @@ export interface ToolLandingProps {
 }
 
 export function ToolLanding({ eyebrow, title, intro, points, faq, related }: ToolLandingProps) {
+  const subject = eyebrow === 'E-commerce' ? 'sneaker' : eyebrow === 'Portraits' ? 'fashion' : eyebrow === 'PNG' ? 'flowers' : 'headphones';
   return (
     <SiteShell>
       {/* FAQ structured data helps this page earn a rich result honestly. */}
@@ -40,22 +42,23 @@ export function ToolLanding({ eyebrow, title, intro, points, faq, related }: Too
         }}
       />
 
-      <div className="mx-auto max-w-5xl px-5 py-12 sm:px-8 sm:py-16">
-        <header className="mx-auto max-w-2xl text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-ink-subtle">
+      <div className="inner-page">
+        <div className="inner-tool-intro"><header>
+          <p className="inner-eyebrow">
             {eyebrow}
           </p>
           <h1 className="mt-3 font-display text-3xl font-bold tracking-[-0.025em] text-ink sm:text-4xl">
             {title}
           </h1>
           <p className="mt-4 text-base leading-relaxed text-ink-muted">{intro}</p>
-        </header>
+          <a href="#upload" className="inner-button">Upload your image <ArrowRight size={18} aria-hidden/></a>
+        </header><figure className="inner-tool-art"><img src={`/showcase/studio/${subject}-after.webp`} alt="Sample subject processed with the ADH background remover" draggable={false}/><figcaption>REAL PHOTO / REAL ADH CUT-OUT</figcaption></figure></div>
 
-        <div className="mt-10">
+        <div className="inner-studio" id="upload">
           <BackgroundRemoverStudio />
         </div>
 
-        <section className="mt-20 grid gap-x-10 gap-y-10 sm:grid-cols-2">
+        <section className="inner-points mt-20 grid gap-x-10 gap-y-10 sm:grid-cols-2">
           {points.map((point) => (
             <div key={point.title}>
               <h2 className="text-[15px] font-semibold tracking-tight text-ink">{point.title}</h2>
@@ -98,6 +101,7 @@ export function ToolLanding({ eyebrow, title, intro, points, faq, related }: Too
             </ul>
           </section>
         )}
+        <InnerCta/>
       </div>
     </SiteShell>
   );

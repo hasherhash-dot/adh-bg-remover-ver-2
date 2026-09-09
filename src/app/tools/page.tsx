@@ -1,3 +1,4 @@
+import { InnerCta } from '@/components/marketing/inner-cta';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ArrowUpRight, Boxes, Globe, Image as ImageIcon, Scissors, Sliders, Terminal } from 'lucide-react';
@@ -59,7 +60,7 @@ const TOOLS = [
 export default function ToolsPage() {
   return (
     <SiteShell>
-      <div className="mx-auto max-w-7xl px-5 py-14 sm:px-8 sm:py-20">
+      <div className="inner-page inner-tools">
         <header className="max-w-2xl">
           <h1 className="font-display text-4xl font-bold tracking-[-0.03em] text-ink sm:text-5xl">Tools</h1>
           <p className="mt-4 text-base leading-relaxed text-ink-muted">
@@ -68,7 +69,7 @@ export default function ToolsPage() {
           </p>
         </header>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="inner-tools-grid mt-12 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {TOOLS.map((tool) => (
             <Link
               key={tool.title}
@@ -94,6 +95,7 @@ export default function ToolsPage() {
             </Link>
           ))}
         </div>
+        <InnerCta/>
       </div>
     </SiteShell>
   );

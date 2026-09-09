@@ -1,3 +1,4 @@
+import { InnerCta } from '@/components/marketing/inner-cta';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { SiteShell } from '@/components/layout/site-shell';
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 export default function ResourcesPage() {
   return (
     <SiteShell>
-      <div className="mx-auto max-w-3xl px-5 py-14 sm:px-8 sm:py-20">
+      <div className="inner-page inner-docs">
         <header>
           <h1 className="font-display text-4xl font-bold tracking-[-0.03em] text-ink sm:text-5xl">
             Resources
@@ -127,6 +128,7 @@ export default function ResourcesPage() {
             .
           </p>
         </section>
+        <InnerCta/>
       </div>
     </SiteShell>
   );
