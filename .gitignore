@@ -4,6 +4,7 @@ out/
 build/
 dist/
 extension/dist/
+extension/adh-background-remover/
 extension/*.zip
 .env
 .env.local
